@@ -21,7 +21,7 @@ public:
     match_msg_.game_type = 4;
     match_msg_.game_progress = 1;
     match_msg_.match_remainder = 300;
-    match_msg_.outpost_hp = 500;
+    match_msg_.base_hp = 500;
     match_msg_.robot_bullet = 750;
     match_msg_.robot_hp = 600;
     match_msg_.test_id = 0;
@@ -36,7 +36,7 @@ public:
   void GameStart();
   void Attacked();
   void LackBullet();
-  void UserSetStatus(int match_state, int robot_hp, int robot_bullet, int outpost_hp);
+  void UserSetStatus(int match_state, int robot_hp, int robot_bullet, int base_hp);
   void SwitchScenarios(int id);
   void FakeInfoPub();
   void FakeRefereeDataPub();

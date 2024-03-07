@@ -33,7 +33,7 @@ namespace sp_decision
         {
             if (status.status == 1)
             {
-                //ROS_INFO("move_base ok");
+                // ROS_INFO("move_base ok");
                 plan_get_ = true;
             }
         }
@@ -42,9 +42,25 @@ namespace sp_decision
     void Blackboard::MatchStatusCallback(const robot_msg::MatchMsg::ConstPtr msg)
     {
         match_status_cbk_mutex.lock();
+        if (game_progress < 4)
+        {
+            game_status_ = MatchSatuts::TO_BEGIN;
+        }
+        if (game_progress == 5)
+        {
+            game_status_ = MatchSatuts::AFTER_MATCH;
+        }
+        if (game_progress == 4 || (match_remainder < 299 && match_remainder > 0))
+        {
+            game_status_ = MatchSatuts::AT_MATCH;
+        }
+        if (robot_hp_ < msg->robot_hp)
+        {
+            available_hp_ -= (msg->robot_hp - robot_hp_);
+        }
         robot_hp_ = msg->robot_hp;
         robot_bullet_ = msg->robot_bullet;
-        outpost_hp_ = msg->outpost_hp;
+        base_hp_ = msg->base_hp;
         game_type = msg->game_type;
         game_progress = msg->game_progress;
         match_remainder = msg->match_remainder;

@@ -4,30 +4,32 @@ namespace sp_decision
 {
     BehaviorState AddBloodBehavior::Update()
     {
-        if (blackboard_ptr_->test_id == 1)
+        ROS_INFO("hp: %d  ,time :%d ,available :%d",blackboard_ptr_->robot_hp_,blackboard_ptr_->match_remainder,blackboard_ptr_->available_hp_ );
+        if (blackboard_ptr_->action_status_ == Blackboard::Action_Lock::JUDGING || blackboard_ptr_->action_status_ == Blackboard::Action_Lock::ADD_BLOOD)
         {
-           // ros::Duration(0.1).sleep();
-            //ROS_INFO("add_blood");
-            Go2Buff();
-            log_exe_ptr_->info("behavior: add blood");
-            return BehaviorState::SUCCESS;
+            if (blackboard_ptr_->action_status_ == Blackboard::Action_Lock::ADD_BLOOD || (blackboard_ptr_->robot_hp_ < 120 && blackboard_ptr_->match_remainder > 60) || blackboard_ptr_->test_id == 1)
+            {
+                blackboard_ptr_->action_status_ = Blackboard::Action_Lock::ADD_BLOOD;
+                if (blackboard_ptr_->robot_hp_ < 600 && blackboard_ptr_->available_hp_ > 0&& blackboard_ptr_->match_remainder > 60)
+                {
+                    ROS_INFO("add_blood");
+                    Go2Buff();
+                    log_exe_ptr_->info("behavior: add blood");
+                    return BehaviorState::SUCCESS;
+                }
+                else if( blackboard_ptr_->available_hp_ <= 0||blackboard_ptr_->robot_hp_ >= 600|| blackboard_ptr_->match_remainder <=60)
+                {
+                    blackboard_ptr_->action_status_ = Blackboard::Action_Lock::JUDGING ;
+                    return BehaviorState::FAILURE;
+                }
+            }
+            return BehaviorState::FAILURE;
         }
-        return BehaviorState::FAILURE;
     }
 
     void AddBloodBehavior::Go2Buff()
     {
-        // double distance=sqrt(pow(blackboard_ptr_->robot_pose_.pose.pose.position.x - blackboard_ptr_->prepare_pos_[0].x, 2) + pow(blackboard_ptr_->robot_pose_.pose.pose.position.x - blackboard_ptr_->prepare_pos_[0].y, 2));
-        // if(distance>0.35)
-        // {
-        //     chassis_exe_ptr_->FastMove(blackboard_ptr_->prepare_pos_[0].x,
-        //                                blackboard_ptr_->prepare_pos_[0].y);
-        //                                ROS_INFO("distance %f",distance);
-        // }
-        // else
-        // { 
-            chassis_exe_ptr_->Cruisr(blackboard_ptr_->buff_pos_[0].x,
-                                   blackboard_ptr_->buff_pos_[0].y);
-        // }
+        chassis_exe_ptr_->Cruisr(blackboard_ptr_->buff_pos_[0].x,
+                                 blackboard_ptr_->buff_pos_[0].y);
     }
 }

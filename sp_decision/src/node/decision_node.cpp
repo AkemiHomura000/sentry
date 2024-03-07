@@ -1,4 +1,5 @@
 #include "node/decision_node.h"
+#include <executor/blackboard.hpp>
 
 namespace sp_decision
 {
@@ -31,9 +32,9 @@ namespace sp_decision
         PursuitBehavior *pursuit_node_ =
             new PursuitBehavior("pursuit", 5, blackboard_, chassis_exe_, log_exe_);
         root_node_->addChild(add_blood_node_, BehaviorPriority::HIGH);
-        root_node_->addChild(retreat_node_, BehaviorPriority::HIGH);
+        root_node_->addChild(retreat_node_, BehaviorPriority::MID);
         root_node_->addChild(attack_node_, BehaviorPriority::MID);
-        root_node_->addChild(defence_node_, BehaviorPriority::MID);
+        root_node_->addChild(defence_node_, BehaviorPriority::HIGH);
         root_node_->addChild(pursuit_node_, BehaviorPriority::MID);
 
         std::stringstream str;
@@ -55,7 +56,10 @@ namespace sp_decision
         int cnt = 0;
         while (decision_thread_running_)
         {
-            root_node_->Run();
+            if (blackboard_->game_status_ == Blackboard::MatchSatuts::AT_MATCH)
+            {
+                root_node_->Run();
+            }
         }
         cnt++;
         if (cnt >= loop_rate_)
