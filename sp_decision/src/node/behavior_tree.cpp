@@ -54,6 +54,9 @@ namespace sp_decision
             return BehaviorState::FAILURE;
         }
     }
+    int SequenceNode::num(){
+        return child_node_ptr_list_.size();
+    }
     void SequenceNode::print()
     {
         std::stringstream str;

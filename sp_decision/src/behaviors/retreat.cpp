@@ -8,28 +8,27 @@ namespace sp_decision
          * @brief: 哨兵掉血过快撤退
          */
         ROS_INFO("retreat_judge");
-        if(blackboard_ptr_->action_status_ == Blackboard::Action_Lock::RETREAT){
-             ROS_INFO("RETREAT");
-        }
-        if(blackboard_ptr_->attacked_violently_){
-             ROS_INFO("attacked");
-        }
+        ROS_INFO("-------------------- %d", blackboard_ptr_->action_status_);
         if (blackboard_ptr_->action_status_ >= Blackboard::Action_Lock::RETREAT)
         {
             if (blackboard_ptr_->attacked_violently_)
             {
                 ROS_INFO("retreat");
-                //RandomMode();
-                // log_exe_ptr_->info("behavior[retreat]:", "fast move");
+                // RandomMode();
+                //  log_exe_ptr_->info("behavior[retreat]:", "fast move");
                 blackboard_ptr_->action_status_ = Blackboard::Action_Lock::RETREAT;
                 return BehaviorState::SUCCESS;
             }
-            else
+            if (blackboard_ptr_->action_status_ == Blackboard::Action_Lock::RETREAT)
             {
-                blackboard_ptr_->action_status_ = Blackboard::Action_Lock::JUDGING;
+                if (!blackboard_ptr_->attacked_violently_)
+                {
+                    blackboard_ptr_->action_status_ = Blackboard::Action_Lock::JUDGING;
+                    return BehaviorState::FAILURE;
+                }
             }
-            return BehaviorState::FAILURE;
         }
+        return BehaviorState::FAILURE;
     }
     void RetreatBehavior::Go2Init()
     {

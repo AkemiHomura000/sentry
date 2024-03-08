@@ -70,6 +70,7 @@ namespace sp_decision
     virtual ~SequenceNode() = default;
     void addChild(TreeNode *child_node_ptr, BehaviorPriority pri);
     virtual BehaviorState Update();
+    int num();
     void print();
     void print_tree();
 
