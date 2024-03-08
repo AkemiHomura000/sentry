@@ -37,7 +37,7 @@ public:
   typedef std::shared_ptr<ChassisExecutor> Ptr;
   void robotStatePub(RobotState robot_state);
   bool Move(double pos_x, double pos_y);
-  void QueueMove(std::vector<sp_decision::Blackboard::Point> points,int stay_time=0);
+  void QueueMove(std::vector<sp_decision::Blackboard::Point> points, sp_decision::Blackboard::Action_Lock action, int stay_time=0);//需保证不同动作调用该函数时不会混淆
   void FastMove(double pos_x, double pos_y);
   void Cruisr(double pos_x, double pos_y);
   void VelIdle();
@@ -46,9 +46,11 @@ public:
   void Idle();
   void SendDataToPlan(double pos_x, double pos_y);
   bool GetMoveStatus();
-  bool move_status = 0; // 移动完成
-  int num = -1;         // 目标点序号
+  bool move_status = 0;                               // 移动完成
+  int num = -1;                                       // 目标点序号
+  sp_decision::Blackboard::Action_Lock action_status=sp_decision::Blackboard::Action_Lock::JUDGING; // 记录调用QueueMove()的动作来源
   geometry_msgs::Twist sentry_cmdvel_;
+
 private:
   sp_decision::Blackboard::Ptr blackboard_;
   ros::NodeHandle nh_;

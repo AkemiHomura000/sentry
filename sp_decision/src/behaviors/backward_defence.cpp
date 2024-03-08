@@ -45,7 +45,7 @@ namespace sp_decision
             if (chassis_exe_ptr_->GetMoveStatus())
             {
                 ros::Duration(1).sleep(); // 等待时间待调整
-                chassis_exe_ptr_->QueueMove(blackboard_ptr_->backward_defence_queue_pos_);
+                chassis_exe_ptr_->QueueMove(blackboard_ptr_->backward_defence_queue_pos_,blackboard_ptr_->action_status_,3);
                 status = Backward_Defence_Status::Third;
             }
         }
@@ -59,7 +59,7 @@ namespace sp_decision
         }
         if (status == Backward_Defence_Status::Third)
         {
-            chassis_exe_ptr_->QueueMove(blackboard_ptr_->backward_defence_queue_pos_, 3);
+            chassis_exe_ptr_->QueueMove(blackboard_ptr_->backward_defence_queue_pos_,blackboard_ptr_->action_status_, 3);
         }
     }
 }

@@ -59,11 +59,16 @@ bool ChassisExecutor::Move(double pos_x, double pos_y)
     ros::Duration(0.2).sleep();
     return blackboard_->plan_get_;
 }
-void ChassisExecutor::QueueMove(std::vector<sp_decision::Blackboard::Point> points,int stay_time)
+void ChassisExecutor::QueueMove(std::vector<sp_decision::Blackboard::Point> points, sp_decision::Blackboard::Action_Lock action, int stay_time)
 {
     robotStatePub(RobotState::CRUISR);
+    if (action_status != action)
+    {
+        num = -1;
+    }
     if (num == -1)
     {
+        action_status = action;
         for (int i = 0; i < points.size(); i++)
         {
             SendDataToPlan(points[0].x, points[0].y);
@@ -75,8 +80,9 @@ void ChassisExecutor::QueueMove(std::vector<sp_decision::Blackboard::Point> poin
     }
     else if (GetMoveStatus())
     {
-        //在目标点停留时间
-        if(stay_time>0){
+        // 在目标点停留时间
+        if (stay_time > 0)
+        {
             ros::Duration(stay_time).sleep();
         }
         for (int i = num + 1; i < 1000; i++)
@@ -102,11 +108,11 @@ void ChassisExecutor::Cruisr(double pos_x, double pos_y)
     robotStatePub(RobotState::CRUISR);
     SendDataToPlan(pos_x, pos_y);
 }
-void ChassisExecutor::VelIdle()//不经过move_base直接发送
+void ChassisExecutor::VelIdle() // 不经过move_base直接发送
 {
-    sentry_cmdvel_.linear.x=0;
-    sentry_cmdvel_.linear.y=0;
-    sentry_cmdvel_.angular.z=max_vel_theta_;
+    sentry_cmdvel_.linear.x = 0;
+    sentry_cmdvel_.linear.y = 0;
+    sentry_cmdvel_.angular.z = max_vel_theta_;
     sentry_cmdvel_pub_.publish(sentry_cmdvel_);
 }
 void ChassisExecutor::VelStop()

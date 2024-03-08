@@ -37,6 +37,6 @@ namespace sp_decision
     }
     void RetreatBehavior::RandomMode()
     {
-        chassis_exe_ptr_->QueueMove(blackboard_ptr_->random_mode_pos, 10);
+        chassis_exe_ptr_->QueueMove(blackboard_ptr_->random_mode_pos,blackboard_ptr_->action_status_, 10);
     }
 } // namespace sp_decision
