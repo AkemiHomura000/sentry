@@ -16,7 +16,8 @@ namespace sp_decision
     BehaviorState Update();
 
   private:
-    void attack_outpost();
+    void attack_point_1();
+    void attack_point_2();
   };
 } // namespace robot_decision
 
