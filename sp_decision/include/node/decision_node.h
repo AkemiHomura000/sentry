@@ -8,6 +8,7 @@
 #include "behaviors/attack.hpp"
 #include "behaviors/backward_defence.hpp"
 #include "behaviors/pursuit.hpp"
+#include "behaviors/patrol.hpp"
 namespace sp_decision
 {
   class DecisionNode

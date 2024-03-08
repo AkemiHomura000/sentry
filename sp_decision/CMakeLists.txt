@@ -45,6 +45,7 @@ add_executable(${PROJECT_NAME}
   src/behaviors/retreat.cpp
   src/behaviors/backward_defence.cpp
   src/behaviors/pursuit.cpp
+  src/behaviors/patrol.cpp
 )
 target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}

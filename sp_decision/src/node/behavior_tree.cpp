@@ -28,7 +28,7 @@ namespace sp_decision
         child_node_ptr_list_.push_back(child_node_ptr);
         for (int i = child_node_ptr_list_.size() - 1; i > 0; i--)
         {
-            if (child_node_ptr_list_[i - 1]->behavior_priority < pri)
+            if (child_node_ptr_list_[i - 1]->behavior_priority > pri)
             {
                 TreeNode *temp = child_node_ptr_list_[i - 1];
                 child_node_ptr_list_[i - 1] = child_node_ptr_list_[i];

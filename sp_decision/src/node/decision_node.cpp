@@ -31,11 +31,14 @@ namespace sp_decision
             new DenfenceBehavior("defence", 4, blackboard_, chassis_exe_, log_exe_);
         PursuitBehavior *pursuit_node_ =
             new PursuitBehavior("pursuit", 5, blackboard_, chassis_exe_, log_exe_);
+        PatrolBehavior *patrol_node_ =
+            new PatrolBehavior("patrol", 6, blackboard_, chassis_exe_, log_exe_);
         root_node_->addChild(add_blood_node_, BehaviorPriority::HIGH);
         root_node_->addChild(retreat_node_, BehaviorPriority::MID);
         root_node_->addChild(attack_node_, BehaviorPriority::MID);
         root_node_->addChild(defence_node_, BehaviorPriority::HIGH);
         root_node_->addChild(pursuit_node_, BehaviorPriority::MID);
+        root_node_->addChild(patrol_node_, BehaviorPriority::LOW);
 
         std::stringstream str;
         str << std::endl
