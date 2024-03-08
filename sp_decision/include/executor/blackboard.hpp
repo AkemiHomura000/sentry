@@ -44,7 +44,8 @@ namespace sp_decision
 
     //
     std::vector<Point> buff_pos_ = {{0.0, 0.0}, {2.5, 0}, {-0.5, 0}, {0.23, -1.1}};
-    std::vector<Point> prepare_pos_ = {{-0.6, -0.9}};
+    std::vector<Point> backward_defence_pos_ = {{1, 1}, {1, 0.5}};     // base周围点位
+    std::vector<Point> backward_defence_queue_pos_ = {{2, 2}, {3, 3}}; // base周围点位
     std::vector<Point> random_mode_pos = {{0.0, 0.0}, {-0.8, 0.0}, {0.0, -0.8}};
     std::vector<Point> attack_pos = {{1.7, 0}, {1.7, 0.8}, {0.0, 0.0}};
     int min_hp_;
@@ -52,7 +53,6 @@ namespace sp_decision
     int min_outpost_;
     float distance_tolerance_;
 
-    int available_hp_ = 600;
     /**
      * @brief
      * test_id
@@ -61,9 +61,9 @@ namespace sp_decision
     uint8_t game_type;
     uint8_t game_progress;
     uint16_t match_remainder;
-    uint16_t robot_hp_=600;
+    uint16_t robot_hp_ = 600;
     uint16_t robot_bullet_;
-    uint16_t base_hp_;
+    uint16_t base_hp_ = 3000;
     nav_msgs::Odometry robot_pose_;
 
     /**
@@ -89,15 +89,20 @@ namespace sp_decision
     // 动作状态
     enum class Action_Lock
     {
-      JUDGING,
       ADD_BLOOD,
+      BACKWARD_DEFENCE,
       ATTACK,
-      BACKWARD_DEFENCE
+      JUDGING,
     };
-    Action_Lock action_status_=Action_Lock::JUDGING;
+    Action_Lock action_status_ = Action_Lock::JUDGING;
 
-    bool plan_get_ = 0; // 规划出路径
-
+    /*
+     *@brife 决策所需变量
+     */
+    int available_hp_ = 600; // 剩余可加血量
+    bool plan_get_ = 0;      // 是否规划出路径规划出路径
+    bool base_attacked_ = 0; // 基地受击状态
+    ros::Time current_time;  // 用于基地受击状态更新
   private:
     ros::NodeHandle nh_;
     ros::Subscriber match_status_sub_;

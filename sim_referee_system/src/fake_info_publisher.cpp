@@ -32,12 +32,15 @@ void FakeInfoPublisher::Test(int id)
   switch (id)
   {
   case 1:
+    match_msg_.base_hp = 3000;
     match_msg_.game_progress = 3;
     break;
   case 2:
+    match_msg_.base_hp = 3000;
     match_msg_.game_progress = 4;
     break;
   case 3:
+  {
     std::string userinput;
     int userorder[2];
     std::cout << "依次键入数据 :  剩余时间 血量" << std::endl;
@@ -48,11 +51,27 @@ void FakeInfoPublisher::Test(int id)
     {
       userstr >> userorder[j];
     }
+    match_msg_.base_hp = 3000;
     match_msg_.match_remainder = userorder[0];
     match_msg_.robot_hp = userorder[1];
     break;
   }
-  // match_msg_.test_id = id;
+  case 4:
+  {
+    std::string userinput;
+    int userorder[1];
+    std::cout << "依次键入数据 :基地血量" << std::endl;
+    std::getline(std::cin, userinput);
+    std::istringstream userstr(userinput);
+    // 从 std::istringstream 中提取整数，并存储在 vector 中
+    for (int j = 0; j < 1; j++)
+    {
+      userstr >> userorder[j];
+    }
+    match_msg_.base_hp = userorder[0];
+  }
+    // match_msg_.test_id = id;
+  }
 }
 void FakeInfoPublisher::GameStart() { match_msg_.match_state = 1; }
 void FakeInfoPublisher::Attacked()

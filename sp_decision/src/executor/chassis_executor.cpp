@@ -8,6 +8,8 @@ ChassisExecutor::ChassisExecutor(const sp_decision::Blackboard::Ptr &blackboard_
         nh_.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1);
     robot_state_pub_ =
         nh_.advertise<robot_msg::RobotStateMsg>("/robot_state", 1);
+    sentry_cmdvel_pub_ =
+        nh_.advertise<geometry_msgs::Twist>("sentry/cmd_vel", 1);
 }
 void ChassisExecutor::robotStatePub(RobotState robot_state)
 {
@@ -38,7 +40,7 @@ void ChassisExecutor::SendDataToPlan(double pos_x, double pos_y)
 bool ChassisExecutor::GetMoveStatus()
 {
     double distance = sqrt(pow(blackboard_->robot_pose_.pose.pose.position.x - target_pose_.pose.position.x, 2) + pow(blackboard_->robot_pose_.pose.pose.position.y - target_pose_.pose.position.y, 2));
-    ROS_INFO("distance %f",distance);
+    ROS_INFO("distance %f", distance);
     if (distance < 0.15)
     {
         move_status = true;
@@ -50,12 +52,14 @@ bool ChassisExecutor::GetMoveStatus()
         return 0;
     }
 }
-void ChassisExecutor::Move(double pos_x, double pos_y)
+bool ChassisExecutor::Move(double pos_x, double pos_y)
 {
     robotStatePub(RobotState::MOVE);
     SendDataToPlan(pos_x, pos_y);
+    ros::Duration(0.2).sleep();
+    return blackboard_->plan_get_;
 }
-void ChassisExecutor::QueueMove(std::vector<sp_decision::Blackboard::Point> points)
+void ChassisExecutor::QueueMove(std::vector<sp_decision::Blackboard::Point> points,int stay_time)
 {
     robotStatePub(RobotState::CRUISR);
     if (num == -1)
@@ -71,6 +75,10 @@ void ChassisExecutor::QueueMove(std::vector<sp_decision::Blackboard::Point> poin
     }
     else if (GetMoveStatus())
     {
+        //在目标点停留时间
+        if(stay_time>0){
+            ros::Duration(stay_time).sleep();
+        }
         for (int i = num + 1; i < 1000; i++)
         {
             num = i % points.size();
@@ -94,8 +102,12 @@ void ChassisExecutor::Cruisr(double pos_x, double pos_y)
     robotStatePub(RobotState::CRUISR);
     SendDataToPlan(pos_x, pos_y);
 }
-void ChassisExecutor::VelIdle()
+void ChassisExecutor::VelIdle()//不经过move_base直接发送
 {
+    sentry_cmdvel_.linear.x=0;
+    sentry_cmdvel_.linear.y=0;
+    sentry_cmdvel_.angular.z=max_vel_theta_;
+    sentry_cmdvel_pub_.publish(sentry_cmdvel_);
 }
 void ChassisExecutor::VelStop()
 {

@@ -16,6 +16,13 @@ namespace sp_decision
         BehaviorState Update();
 
     private:
+        enum class Backward_Defence_Status{
+            Init,
+            First,
+            Second,
+            Third
+        };
+        Backward_Defence_Status status=Backward_Defence_Status::Init;
         void backward_defnece();
     };
 } // namespace robot_decision

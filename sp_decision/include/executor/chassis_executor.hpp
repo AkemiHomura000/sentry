@@ -36,8 +36,8 @@ public:
   ChassisExecutor(const sp_decision::Blackboard::Ptr &blackboard_ptr);
   typedef std::shared_ptr<ChassisExecutor> Ptr;
   void robotStatePub(RobotState robot_state);
-  void Move(double pos_x, double pos_y);
-  void QueueMove(std::vector<sp_decision::Blackboard::Point> points);
+  bool Move(double pos_x, double pos_y);
+  void QueueMove(std::vector<sp_decision::Blackboard::Point> points,int stay_time=0);
   void FastMove(double pos_x, double pos_y);
   void Cruisr(double pos_x, double pos_y);
   void VelIdle();
@@ -47,12 +47,14 @@ public:
   void SendDataToPlan(double pos_x, double pos_y);
   bool GetMoveStatus();
   bool move_status = 0; // 移动完成
-  int num=-1;              // 目标点序号
+  int num = -1;         // 目标点序号
+  geometry_msgs::Twist sentry_cmdvel_;
 private:
   sp_decision::Blackboard::Ptr blackboard_;
   ros::NodeHandle nh_;
   ros::Publisher set_goal_pub_;
   ros::Publisher robot_state_pub_;
+  ros::Publisher sentry_cmdvel_pub_;
   geometry_msgs::PoseStamped target_pose_;
   move_base_msgs::MoveBaseGoal goal_;
   double max_vel_theta_;

@@ -5,7 +5,7 @@ namespace sp_decision
     BehaviorState AddBloodBehavior::Update()
     {
         ROS_INFO("hp: %d  ,time :%d ,available :%d",blackboard_ptr_->robot_hp_,blackboard_ptr_->match_remainder,blackboard_ptr_->available_hp_ );
-        if (blackboard_ptr_->action_status_ == Blackboard::Action_Lock::JUDGING || blackboard_ptr_->action_status_ == Blackboard::Action_Lock::ADD_BLOOD)
+        if (blackboard_ptr_->action_status_ >=  Blackboard::Action_Lock::ADD_BLOOD)
         {
             if (blackboard_ptr_->action_status_ == Blackboard::Action_Lock::ADD_BLOOD || (blackboard_ptr_->robot_hp_ < 120 && blackboard_ptr_->match_remainder > 60) || blackboard_ptr_->test_id == 1)
             {

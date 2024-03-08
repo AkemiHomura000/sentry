@@ -42,6 +42,7 @@ namespace sp_decision
     void Blackboard::MatchStatusCallback(const robot_msg::MatchMsg::ConstPtr msg)
     {
         match_status_cbk_mutex.lock();
+        //判断比赛进程
         if (game_progress < 4)
         {
             game_status_ = MatchSatuts::TO_BEGIN;
@@ -54,10 +55,31 @@ namespace sp_decision
         {
             game_status_ = MatchSatuts::AT_MATCH;
         }
+        //更新可用血量
         if (robot_hp_ < msg->robot_hp)
         {
             available_hp_ -= (msg->robot_hp - robot_hp_);
         }
+        //更新基地受击状态
+        if(base_hp_>msg->base_hp||base_attacked_)
+        {
+            ROS_INFO("base :%f",msg->base_hp);
+            base_attacked_=true;
+            if(base_hp_==msg->base_hp)
+            {
+                ros::Time time = ros::Time::now();
+                if((time.sec-current_time.sec)>5)//频率待确定
+                {
+                    base_attacked_=false;
+                    current_time=ros::Time::now();
+                }
+            }
+            if(base_hp_>msg->base_hp)
+            {
+                current_time=ros::Time::now();
+            }
+        }
+        
         robot_hp_ = msg->robot_hp;
         robot_bullet_ = msg->robot_bullet;
         base_hp_ = msg->base_hp;
