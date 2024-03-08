@@ -20,6 +20,11 @@ namespace sp_decision
 
     void Go2Init();
     void RandomMode();
+    // enum class Retreat_Status{
+    //         SUCCESS,
+    //         FAIL
+    //     };
+    // Retreat_Status status=Retreat_Status::FAIL;
   };
 } // namespace sp_decision
 

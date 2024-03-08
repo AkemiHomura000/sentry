@@ -91,6 +91,7 @@ namespace sp_decision
     {
       ADD_BLOOD,
       BACKWARD_DEFENCE,
+      RETREAT,
       ATTACK,
       JUDGING,
     };
@@ -99,10 +100,14 @@ namespace sp_decision
     /*
      *@brife 决策所需变量
      */
-    int available_hp_ = 600; // 剩余可加血量
-    bool plan_get_ = 0;      // 是否规划出路径规划出路径
-    bool base_attacked_ = 0; // 基地受击状态
-    ros::Time current_time;  // 用于基地受击状态更新
+    int available_hp_ = 600;      // 剩余可加血量
+    bool plan_get_ = 0;           // 是否规划出路径规划出路径
+    bool base_attacked_ = 0;      // 基地受击状态
+    ros::Time current_time;       // 用于基地受击状态更新
+    int current_hp;
+    bool status_init=0;//状态初始化
+     ros::Time time_1;
+    bool attacked_violently_ = 0; // 掉血速度过快
   private:
     ros::NodeHandle nh_;
     ros::Subscriber match_status_sub_;

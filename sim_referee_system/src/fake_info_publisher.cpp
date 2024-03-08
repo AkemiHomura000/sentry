@@ -27,7 +27,7 @@ void FakeInfoPublisher::Remainder(int time)
     match_msg_.match_remainder = time;
   }
 }
-void FakeInfoPublisher::Test(int id)
+void FakeInfoPublisher::Test(int id,FakeInfoPublisher* fakeinfo)
 {
   switch (id)
   {
@@ -69,6 +69,26 @@ void FakeInfoPublisher::Test(int id)
       userstr >> userorder[j];
     }
     match_msg_.base_hp = userorder[0];
+    break;
+  }
+  case 5:
+  {
+    std::string userinput;
+    int userorder[2];
+    std::cout << "依次键入数据 :烧饼掉血速度(/s),剩余时间" << std::endl;
+    std::getline(std::cin, userinput);
+    std::istringstream userstr(userinput);
+    for (int j = 0; j < 2; j++)
+    {
+      userstr >> userorder[j];
+    }
+    for(int n=0;n<100;n++)
+    {
+      match_msg_.robot_hp=600-0.1*n*userorder[0];
+      match_msg_.match_remainder=userorder[1];
+      fakeinfo->FakeInfoPub();
+      ros::Duration(0.1).sleep();
+    }
   }
     // match_msg_.test_id = id;
   }
@@ -177,7 +197,7 @@ int main(int argc, char **argv)
     if (input == "q")
       break;
     int id = std::stoi(input);
-    fakeinfo.Test(id);
+    fakeinfo.Test(id,&fakeinfo);
     // std::cout << "Enter the remainder(/s): ";
     // std::getline(std::cin, input);
     // int time = std::stoi(input);

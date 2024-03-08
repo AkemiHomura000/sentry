@@ -5,17 +5,31 @@ namespace sp_decision
     BehaviorState RetreatBehavior::Update()
     {
         /**
-         * @brief: 哨兵预装弹，无弹回原点自旋
+         * @brief: 哨兵掉血过快撤退
          */
-        if (blackboard_ptr_->test_id == 5)
-        {
-            ROS_INFO("retreat");
-            RandomMode();
-            // log_exe_ptr_->info("behavior[retreat]:", "fast move");
-
-            return BehaviorState::SUCCESS;
+        ROS_INFO("retreat_judge");
+        if(blackboard_ptr_->action_status_ == Blackboard::Action_Lock::RETREAT){
+             ROS_INFO("RETREAT");
         }
-        return BehaviorState::FAILURE;
+        if(blackboard_ptr_->attacked_violently_){
+             ROS_INFO("attacked");
+        }
+        if (blackboard_ptr_->action_status_ >= Blackboard::Action_Lock::RETREAT)
+        {
+            if (blackboard_ptr_->attacked_violently_)
+            {
+                ROS_INFO("retreat");
+                //RandomMode();
+                // log_exe_ptr_->info("behavior[retreat]:", "fast move");
+                blackboard_ptr_->action_status_ = Blackboard::Action_Lock::RETREAT;
+                return BehaviorState::SUCCESS;
+            }
+            else
+            {
+                blackboard_ptr_->action_status_ = Blackboard::Action_Lock::JUDGING;
+            }
+            return BehaviorState::FAILURE;
+        }
     }
     void RetreatBehavior::Go2Init()
     {
@@ -24,20 +38,6 @@ namespace sp_decision
     }
     void RetreatBehavior::RandomMode()
     {
-        if (std::hypot(blackboard_ptr_->robot_pose_.pose.pose.position.x -
-                           blackboard_ptr_->random_mode_pos[random_mode_pos_count].x,
-                       blackboard_ptr_->robot_pose_.pose.pose.position.y -
-                           blackboard_ptr_->random_mode_pos[random_mode_pos_count].y) <
-            blackboard_ptr_->distance_tolerance_)
-        {
-            random_mode_pos_count++;
-            if (random_mode_pos_count == 4)
-            {
-                random_mode_pos_count = 0;
-            }
-        }
-        chassis_exe_ptr_->FastMove(blackboard_ptr_->random_mode_pos[random_mode_pos_count].x,
-                                   blackboard_ptr_->random_mode_pos[random_mode_pos_count].y);
-
+        chassis_exe_ptr_->QueueMove(blackboard_ptr_->random_mode_pos, 10);
     }
 } // namespace sp_decision

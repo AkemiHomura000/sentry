@@ -32,7 +32,7 @@ public:
   }
   void initialization(int id);
   void Remainder(int time);
-  void Test(int id);
+  void Test(int id,FakeInfoPublisher *fakeinfo);
   void GameStart();
   void Attacked();
   void LackBullet();
