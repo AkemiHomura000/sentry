@@ -32,13 +32,14 @@ public:
     IDLE,
     FAST,
     STOP,
+    ROTATE,
   };
   ChassisExecutor(const sp_decision::Blackboard::Ptr &blackboard_ptr);
   typedef std::shared_ptr<ChassisExecutor> Ptr;
   void robotStatePub(RobotState robot_state);
   bool Move(double pos_x, double pos_y);
   void QueueMove(std::vector<sp_decision::Blackboard::Point> points, sp_decision::Blackboard::Action_Lock action, int stay_time=0);//需保证不同动作调用该函数时不会混淆
-  void FastMove(double pos_x, double pos_y);
+  bool FastMove(double pos_x, double pos_y);
   void Cruisr(double pos_x, double pos_y);
   void VelIdle();
   void VelStop();

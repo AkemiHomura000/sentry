@@ -83,6 +83,7 @@ namespace local_planner
             IDLE,
             FAST,
             STOP,
+            ROTATE,
         };
         RobotState state_;
         ros::Subscriber robot_state_sub_;
@@ -205,6 +206,9 @@ namespace local_planner
             case 4:
                 state_ = RobotState::STOP;
                 break;
+            case 5:
+                state_ = RobotState::ROTATE;
+                break;
             default:
                 ROS_WARN("Invalid robot state value: %d", robot_state_value);
                 return;
@@ -230,29 +234,21 @@ namespace local_planner
             {
             case RobotState::MOVE:
             {
-                if (distance > 1)
+                if (distance > 0.5)
                 {
                     cmd_vel.angular.z = 0;
                     // 正常行驶速度
-                    v = max_v_*1.4;
+                    v = max_v_ * 1.4;
                     // 遇到障碍减速
                     ratio = 0.8;
-                }
-                else if (distance > 0.5)
-                {
-                    cmd_vel.angular.z = 0;
-                    // 正常行驶速度
-                    v = 3*max_v_ / 4;
-                    // 遇到障碍减速
-                    ratio = 0.4;
                 }
                 else
                 {
                     cmd_vel.angular.z = 0;
                     // 正常行驶速度
-                    v = 1*max_v_ / 2;
+                    v =  0.6*max_v_ ;
                     // 遇到障碍减速
-                    ratio = 0.4;
+                    ratio = 0.8;
                 }
                 break;
             }
@@ -285,6 +281,12 @@ namespace local_planner
                 v = max_v_ * 0.0;
                 // 遇到障碍减速
                 ratio = 1.0;
+                break;
+            }
+            case RobotState::ROTATE:
+            {
+                v = max_v_ * 0.0;
+                cmd_vel.angular.z = max_vel_theta_;
                 break;
             }
             default:

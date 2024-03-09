@@ -16,6 +16,7 @@ namespace sp_decision
     BehaviorState Update();
 
   private:
+    int num = 0;
     void attack_point_1();
     void attack_point_2();
   };

@@ -6,6 +6,9 @@ namespace sp_decision
     {
         if (blackboard_ptr_->action_status_ >= Blackboard::Action_Lock::BACKWARD_DEFENCE)
         {
+             if (blackboard_ptr_->action_status_!= Blackboard::Action_Lock::BACKWARD_DEFENCE){
+                status = Backward_Defence_Status::Init;
+             }
             if (blackboard_ptr_->base_attacked_)
             {
                 blackboard_ptr_->action_status_ = Blackboard::Action_Lock::BACKWARD_DEFENCE;
@@ -31,11 +34,11 @@ namespace sp_decision
     {
         if (status == Backward_Defence_Status::Init)
         {
-            if (chassis_exe_ptr_->Move(blackboard_ptr_->backward_defence_pos_[0].x, blackboard_ptr_->backward_defence_pos_[0].y))
+            if (chassis_exe_ptr_->FastMove(blackboard_ptr_->backward_defence_pos_[0].x, blackboard_ptr_->backward_defence_pos_[0].y))
             {
                 status = Backward_Defence_Status::First;
             }
-            else if (chassis_exe_ptr_->Move(blackboard_ptr_->backward_defence_pos_[1].x, blackboard_ptr_->backward_defence_pos_[1].y))
+            else if (chassis_exe_ptr_->FastMove(blackboard_ptr_->backward_defence_pos_[1].x, blackboard_ptr_->backward_defence_pos_[1].y))
             {
                 status = Backward_Defence_Status::Second;
             }
@@ -44,7 +47,8 @@ namespace sp_decision
         {
             if (chassis_exe_ptr_->GetMoveStatus())
             {
-                ros::Duration(1).sleep(); // 等待时间待调整
+                chassis_exe_ptr_->VelIdle();
+                ros::Duration(3).sleep(); // 等待时间待调整
                 chassis_exe_ptr_->QueueMove(blackboard_ptr_->backward_defence_queue_pos_,blackboard_ptr_->action_status_,3);
                 status = Backward_Defence_Status::Third;
             }
@@ -52,7 +56,7 @@ namespace sp_decision
         if (status == Backward_Defence_Status::Second)
         {
             chassis_exe_ptr_->VelIdle();
-            if (chassis_exe_ptr_->Move(blackboard_ptr_->backward_defence_pos_[0].x, blackboard_ptr_->backward_defence_pos_[0].y))
+            if (chassis_exe_ptr_->FastMove(blackboard_ptr_->backward_defence_pos_[0].x, blackboard_ptr_->backward_defence_pos_[0].y))
             {
                 status = Backward_Defence_Status::First;
             }

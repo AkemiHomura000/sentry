@@ -83,6 +83,7 @@ void ChassisExecutor::QueueMove(std::vector<sp_decision::Blackboard::Point> poin
         // 在目标点停留时间
         if (stay_time > 0)
         {
+            VelIdle();
             ros::Duration(stay_time).sleep();
         }
         for (int i = num + 1; i < 1000; i++)
@@ -97,23 +98,23 @@ void ChassisExecutor::QueueMove(std::vector<sp_decision::Blackboard::Point> poin
         }
     }
 }
-void ChassisExecutor::FastMove(double pos_x, double pos_y)
+bool ChassisExecutor::FastMove(double pos_x, double pos_y)
 {
 
     robotStatePub(RobotState::FAST);
     SendDataToPlan(pos_x, pos_y);
+    ros::Duration(0.2).sleep();
+    return blackboard_->plan_get_;
 }
 void ChassisExecutor::Cruisr(double pos_x, double pos_y)
 {
     robotStatePub(RobotState::CRUISR);
     SendDataToPlan(pos_x, pos_y);
 }
-void ChassisExecutor::VelIdle() // 不经过move_base直接发送
+void ChassisExecutor::VelIdle() 
 {
-    sentry_cmdvel_.linear.x = 0;
-    sentry_cmdvel_.linear.y = 0;
-    sentry_cmdvel_.angular.z = max_vel_theta_;
-    sentry_cmdvel_pub_.publish(sentry_cmdvel_);
+   robotStatePub(RobotState::ROTATE);
+    SendDataToPlan(0, 0);
 }
 void ChassisExecutor::VelStop()
 {

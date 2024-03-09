@@ -20,6 +20,6 @@ namespace sp_decision
 
     void PatrolBehavior::patrol()
     {
-        chassis_exe_ptr_->Move(blackboard_ptr_->patrol_pos[0].x, blackboard_ptr_->patrol_pos[0].y);
+        chassis_exe_ptr_->FastMove(blackboard_ptr_->patrol_pos[0].x, blackboard_ptr_->patrol_pos[0].y);
     }
 }

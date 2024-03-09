@@ -29,8 +29,8 @@ void LocalPlanner::initialize(std::string name, tf2_ros::Buffer* tf,
         robot_state_sub_ = nh.subscribe("/robot_state", 1, &LocalPlanner::robotStateCallback,this);
 
         nh.param<double>("/tracking_tolerance", p_window_, 0.5);
-        nh.param<double>("/distance_tolerance", p_precision_, 0.1);
-        nh.param<double>("/max_linear_speed", max_v_, 0.8);
+        nh.param<double>("/distance_tolerance", p_precision_, 0.05);
+        nh.param<double>("/max_linear_speed", max_v_, 1);
         nh.param<double>("/max_vel_theta", max_vel_theta_, 3.14);
         nh.param<double>("/radius", radius_, 0.2);
 
