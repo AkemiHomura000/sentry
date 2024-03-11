@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   tf
+  robot_msg
 )
 
 ## System dependencies are found with CMake's conventions
@@ -137,8 +138,7 @@ add_executable(${PROJECT_NAME}
                 src/sentry_communicator.cpp
                 src/can_bus.cpp
                 src/socketcan.cpp)
-add_executable(relay
-                src/relay.cpp)
+
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -153,9 +153,7 @@ add_executable(relay
 target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
 )
-target_link_libraries(relay
-  ${catkin_LIBRARIES}
-)
+
 #############
 ## Install ##
 #############

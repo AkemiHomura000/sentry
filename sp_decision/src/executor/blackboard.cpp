@@ -8,7 +8,8 @@ namespace sp_decision
                                           &Blackboard::MatchStatusCallback, this);
         robot_odom_sub_ =
             nh_.subscribe("localization", 1, &Blackboard::RobotPoseCallback, this);
-
+        referee_info_sub_ =
+            nh_.subscribe("referee_info", 1, &Blackboard::RefereeInfoCallback, this);
         referee_data_sub_ = nh_.subscribe("referee_data", 1,
                                           &Blackboard::RefereeDataCallback, this);
         cmd_vel_sub_ = nh_.subscribe("cmd_vel", 10, &Blackboard::CmdVelDataCallback, this);
@@ -42,26 +43,13 @@ namespace sp_decision
     void Blackboard::MatchStatusCallback(const robot_msg::MatchMsg::ConstPtr msg)
     {
         match_status_cbk_mutex.lock();
-        // 判断比赛进程
-        if (game_progress < 4)
-        {
-            game_status_ = MatchSatuts::TO_BEGIN;
-        }
-        if (game_progress == 5)
-        {
-            game_status_ = MatchSatuts::AFTER_MATCH;
-        }
-        if (game_progress == 4 || (match_remainder < 299 && match_remainder > 0))
-        {
-            game_status_ = MatchSatuts::AT_MATCH;
-        }
-        // 更新可用血量
+        // 更新可用血量?
         if (robot_hp_ < msg->robot_hp)
         {
             available_hp_ -= (msg->robot_hp - robot_hp_);
         }
-        // 更新烧饼受击状态
-        if (robot_hp_ > msg->robot_hp||status_init||attacked_violently_)
+        // 更新烧饼受击状态?
+        if (robot_hp_ > msg->robot_hp || status_init || attacked_violently_)
         {
             if (!status_init)
             {
@@ -69,7 +57,7 @@ namespace sp_decision
                 current_hp = msg->robot_hp;
                 status_init = 1;
             }
-            if (ros::Time::now().sec - time_1.sec > 3) // 3s更新一次
+            if (ros::Time::now().sec - time_1.sec > 3) // 3s更新一�?
             {
                 if (current_hp - msg->robot_hp > 90)
                 {
@@ -82,33 +70,8 @@ namespace sp_decision
                 status_init = 0;
             }
         }
-
-        // 更新基地受击状态
-        if (base_hp_ > msg->base_hp || base_attacked_)
-        {
-            ROS_INFO("base :%f", msg->base_hp);
-            base_attacked_ = true;
-            if (base_hp_ == msg->base_hp)
-            {
-                ros::Time time = ros::Time::now();
-                if ((time.sec - current_time.sec) > 5) // 频率待确定
-                {
-                    base_attacked_ = false;
-                    current_time = ros::Time::now();
-                }
-            }
-            if (base_hp_ > msg->base_hp)
-            {
-                current_time = ros::Time::now();
-            }
-        }
-
         robot_hp_ = msg->robot_hp;
         robot_bullet_ = msg->robot_bullet;
-        base_hp_ = msg->base_hp;
-        game_type = msg->game_type;
-        game_progress = msg->game_progress;
-        match_remainder = msg->match_remainder;
         test_id = msg->test_id;
         match_state_received_ = true;
         match_status_cbk_mutex.unlock();
@@ -128,6 +91,46 @@ namespace sp_decision
         posy_y_ = msg->y;
         key_z_ = msg->z;
         referee_data_cbk_mutex.unlock();
+    }
+    void Blackboard::RefereeInfoCallback(const robot_msg::RefereeInfoMsg::ConstPtr &msg)
+    {
+        referee_info_mutex.lock();
+         // 判断比赛进程
+        if (game_progress < 4)
+        {
+            game_status_ = MatchSatuts::TO_BEGIN;
+        }
+        if (game_progress == 5)
+        {
+            game_status_ = MatchSatuts::AFTER_MATCH;
+        }
+        if (game_progress == 4 || (stage_remain_time < 299 && stage_remain_time > 0))
+        {
+            game_status_ = MatchSatuts::AT_MATCH;
+        }
+        // 更新基地受击状态?
+        if (base_HP_ > msg->base_HP || base_attacked_)
+        {
+            ROS_INFO("base :%f", msg->base_HP);
+            base_attacked_ = true;
+            if (base_HP_ == msg->base_HP)
+            {
+                ros::Time time = ros::Time::now();
+                if ((time.sec - current_time.sec) > 5) // 频率待确定?
+                {
+                    base_attacked_ = false;
+                    current_time = ros::Time::now();
+                }
+            }
+            if (base_HP_ > msg->base_HP)
+            {
+                current_time = ros::Time::now();
+            }
+        }
+        base_HP_ = msg->base_HP;
+        game_progress = msg->game_progress;
+        stage_remain_time = msg->stage_remain_time;
+        referee_info_mutex.unlock();
     }
     void Blackboard::CmdVelDataCallback(const geometry_msgs::Twist &msg)
     {

@@ -8,14 +8,12 @@ void FakeInfoPublisher::initialization(int id = 4)
   {
   case 1:
   {
-    match_msg_.game_type = 1;
-    match_msg_.game_progress = 4;
+    referee_msg_.game_progress = 4;
     break;
   }
   case 4:
   {
-    match_msg_.game_type = 4;
-    match_msg_.game_progress = 4;
+    referee_msg_.game_progress = 4;
     break;
   }
   }
@@ -24,7 +22,7 @@ void FakeInfoPublisher::Remainder(int time)
 {
   if (time > 0)
   {
-    match_msg_.match_remainder = time;
+    referee_msg_.stage_remain_time = time;
   }
 }
 void FakeInfoPublisher::Test(int id,FakeInfoPublisher* fakeinfo)
@@ -32,27 +30,27 @@ void FakeInfoPublisher::Test(int id,FakeInfoPublisher* fakeinfo)
   switch (id)
   {
   case 1:
-    match_msg_.base_hp = 3000;
-    match_msg_.game_progress = 3;
+    referee_msg_.base_HP = 3000;
+    referee_msg_.game_progress = 3;
     break;
   case 2:
-    match_msg_.base_hp = 3000;
-    match_msg_.game_progress = 4;
+    referee_msg_.base_HP = 3000;
+    referee_msg_.game_progress = 4;
     break;
   case 3:
   {
     std::string userinput;
     int userorder[2];
-    std::cout << "依次键入数据 :  剩余时间 血量" << std::endl;
+    std::cout << "依次键入数据 :  剩余时间 血�?" << std::endl;
     std::getline(std::cin, userinput);
     std::istringstream userstr(userinput);
-    // 从 std::istringstream 中提取整数，并存储在 vector 中
+    // �? std::istringstream 中提取整数，并存储在 vector �?
     for (int j = 0; j < 2; j++)
     {
       userstr >> userorder[j];
     }
-    match_msg_.base_hp = 3000;
-    match_msg_.match_remainder = userorder[0];
+    referee_msg_.base_HP = 3000;
+    referee_msg_.stage_remain_time = userorder[0];
     match_msg_.robot_hp = userorder[1];
     break;
   }
@@ -60,15 +58,15 @@ void FakeInfoPublisher::Test(int id,FakeInfoPublisher* fakeinfo)
   {
     std::string userinput;
     int userorder[1];
-    std::cout << "依次键入数据 :基地血量" << std::endl;
+    std::cout << "依次键入数据 :基地血�?" << std::endl;
     std::getline(std::cin, userinput);
     std::istringstream userstr(userinput);
-    // 从 std::istringstream 中提取整数，并存储在 vector 中
+    // �? std::istringstream 中提取整数，并存储在 vector �?
     for (int j = 0; j < 1; j++)
     {
       userstr >> userorder[j];
     }
-    match_msg_.base_hp = userorder[0];
+    referee_msg_.base_HP = userorder[0];
     break;
   }
   case 5:
@@ -85,7 +83,7 @@ void FakeInfoPublisher::Test(int id,FakeInfoPublisher* fakeinfo)
     for(int n=0;n<100;n++)
     {
       match_msg_.robot_hp=600-0.1*n*userorder[0];
-      match_msg_.match_remainder=userorder[1];
+      referee_msg_.stage_remain_time=userorder[1];
       fakeinfo->FakeInfoPub();
       ros::Duration(0.1).sleep();
     }
@@ -99,21 +97,21 @@ void FakeInfoPublisher::Attacked()
   match_msg_.match_state = 1;
   match_msg_.robot_hp = rng_.generateRandomInt(0, 200);
   match_msg_.robot_bullet = rng_.generateRandomInt(0, 750);
-  match_msg_.base_hp = rng_.generateRandomInt(0, 600);
+  referee_msg_.base_HP = rng_.generateRandomInt(0, 600);
 }
 void FakeInfoPublisher::LackBullet()
 {
   match_msg_.match_state = 1;
   match_msg_.robot_hp = rng_.generateRandomInt(0, 400);
   match_msg_.robot_bullet = rng_.generateRandomInt(0, 100);
-  match_msg_.base_hp = rng_.generateRandomInt(0, 600);
+  referee_msg_.base_HP = rng_.generateRandomInt(0, 600);
 }
 void FakeInfoPublisher::UserSetStatus(int match_state, int robot_hp, int robot_bullet, int base_hp)
 {
   match_msg_.match_state = match_state;
   match_msg_.robot_hp = robot_hp;
   match_msg_.robot_bullet = robot_bullet;
-  match_msg_.base_hp = base_hp;
+  referee_msg_.base_HP = base_hp;
 }
 
 std::string userinput;
@@ -134,11 +132,11 @@ void FakeInfoPublisher::SwitchScenarios(int id)
     break;
   case 4:
   {
-    std::cout << "依次键入数据 : 比赛状态 血量 弹丸 前哨战" << std::endl;
+    std::cout << "依次键入数据 : 比赛状�? 血�? 弹丸 前哨�?" << std::endl;
 
     std::getline(std::cin, userinput);
     std::istringstream userstr(userinput);
-    // 从 std::istringstream 中提取整数，并存储在 vector 中
+    // �? std::istringstream 中提取整数，并存储在 vector �?
     for (int j = 0; j < 4; j++)
     {
       userstr >> userorder[j];
@@ -169,7 +167,7 @@ void FakeInfoPublisher::SwitchScenarios(int id)
     ROS_WARN_STREAM("Scenario error:" << id);
     break;
   }
-  // 场景选择错误，信息保留上一次
+  // 场景选择错误，信息保留上一�?
   FakeInfoPub();
 }
 

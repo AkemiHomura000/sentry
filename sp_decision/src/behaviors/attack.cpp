@@ -10,7 +10,7 @@ namespace sp_decision
             {
                 num = 0;//重置标识符
             }
-            if (blackboard_ptr_->robot_hp_ > 400 && blackboard_ptr_->match_remainder > 180)
+            if (blackboard_ptr_->robot_hp_ > 400 && blackboard_ptr_->stage_remain_time > 180)
             {
                 ROS_INFO("attack");
                 attack_point_1();

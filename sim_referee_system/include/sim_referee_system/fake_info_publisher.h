@@ -2,6 +2,7 @@
 #define FAKE_INFO_H
 #include <robot_msg/MatchMsg.h>
 #include <ros/ros.h>
+#include <robot_msg/RefereeInfoMsg.h>
 #include <geometry_msgs/Point.h>
 
 #include <iostream>
@@ -18,10 +19,9 @@ public:
     fake_referee_data_publisher_ =
         nh_.advertise<geometry_msgs::Point>("referee_data", 1);
     match_msg_.match_state = 0;
-    match_msg_.game_type = 4;
-    match_msg_.game_progress = 1;
-    match_msg_.match_remainder = 300;
-    match_msg_.base_hp = 500;
+    referee_msg_.game_progress = 1;
+    referee_msg_.stage_remain_time = 300;
+    referee_msg_.base_HP = 500;
     match_msg_.robot_bullet = 750;
     match_msg_.robot_hp = 600;
     match_msg_.test_id = 0;
@@ -47,6 +47,7 @@ private:
   ros::Publisher fake_info_publihser_;
   ros::Publisher fake_referee_data_publisher_;
   robot_msg::MatchMsg match_msg_;
+  robot_msg::RefereeInfoMsg referee_msg_;
   geometry_msgs::Point lower_referee_data_;
   struct RandomNumberGenerator
   {
