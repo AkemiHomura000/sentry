@@ -25,7 +25,7 @@ void FakeInfoPublisher::Remainder(int time)
     referee_msg_.stage_remain_time = time;
   }
 }
-void FakeInfoPublisher::Test(int id,FakeInfoPublisher* fakeinfo)
+void FakeInfoPublisher::Test(int id, FakeInfoPublisher *fakeinfo)
 {
   switch (id)
   {
@@ -80,10 +80,10 @@ void FakeInfoPublisher::Test(int id,FakeInfoPublisher* fakeinfo)
     {
       userstr >> userorder[j];
     }
-    for(int n=0;n<100;n++)
+    for (int n = 0; n < 100; n++)
     {
-      match_msg_.robot_hp=600-0.1*n*userorder[0];
-      referee_msg_.stage_remain_time=userorder[1];
+      match_msg_.robot_hp = 600 - 0.1 * n * userorder[0];
+      referee_msg_.stage_remain_time = userorder[1];
       fakeinfo->FakeInfoPub();
       ros::Duration(0.1).sleep();
     }
@@ -173,7 +173,8 @@ void FakeInfoPublisher::SwitchScenarios(int id)
 
 void FakeInfoPublisher::FakeInfoPub()
 {
-  fake_info_publihser_.publish(match_msg_);
+  fake_referee_info_publisher_.publish(referee_msg_);
+  fake_referee_data_publisher_.publish(lower_referee_data_);
 }
 
 void FakeInfoPublisher::FakeRefereeDataPub()
@@ -195,7 +196,7 @@ int main(int argc, char **argv)
     if (input == "q")
       break;
     int id = std::stoi(input);
-    fakeinfo.Test(id,&fakeinfo);
+    fakeinfo.Test(id, &fakeinfo);
     // std::cout << "Enter the remainder(/s): ";
     // std::getline(std::cin, input);
     // int time = std::stoi(input);

@@ -18,6 +18,8 @@ public:
         nh_.advertise<robot_msg::MatchMsg>("match_status", 1);
     fake_referee_data_publisher_ =
         nh_.advertise<geometry_msgs::Point>("referee_data", 1);
+    fake_referee_info_publisher_=
+        nh_.advertise<robot_msg::RefereeInfoMsg>("referee_info",1);
     match_msg_.match_state = 0;
     referee_msg_.game_progress = 1;
     referee_msg_.stage_remain_time = 300;
@@ -46,6 +48,7 @@ private:
   ros::NodeHandle nh_;
   ros::Publisher fake_info_publihser_;
   ros::Publisher fake_referee_data_publisher_;
+  ros::Publisher fake_referee_info_publisher_;
   robot_msg::MatchMsg match_msg_;
   robot_msg::RefereeInfoMsg referee_msg_;
   geometry_msgs::Point lower_referee_data_;

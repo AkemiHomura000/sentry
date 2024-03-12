@@ -9,7 +9,7 @@ ChassisExecutor::ChassisExecutor(const sp_decision::Blackboard::Ptr &blackboard_
     robot_state_pub_ =
         nh_.advertise<robot_msg::RobotStateMsg>("/robot_state", 1);
     sentry_cmdvel_pub_ =
-        nh_.advertise<geometry_msgs::Twist>("sentry/cmd_vel", 1);
+        nh_.advertise<geometry_msgs::Twist>("/cmd_vel", 1);
 }
 void ChassisExecutor::robotStatePub(RobotState robot_state)
 {
