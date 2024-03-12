@@ -17,6 +17,9 @@ find_package(catkin REQUIRED COMPONENTS
   nav_msgs
   actionlib
   actionlib_msgs
+  tf
+  tf2_ros
+  tf2_geometry_msgs
 )
 
 catkin_package(
@@ -47,6 +50,11 @@ add_executable(${PROJECT_NAME}
   src/behaviors/pursuit.cpp
   src/behaviors/patrol.cpp
 )
+
 target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
 )
+
+add_executable(armor_relay src/executor/armor_relay.cpp)
+target_link_libraries(armor_relay 
+                                ${catkin_LIBRARIES}) 
