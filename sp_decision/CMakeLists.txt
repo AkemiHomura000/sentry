@@ -56,5 +56,7 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 add_executable(armor_relay src/executor/armor_relay.cpp)
+
 target_link_libraries(armor_relay 
-                                ${catkin_LIBRARIES}) 
+  ${catkin_LIBRARIES}
+) 

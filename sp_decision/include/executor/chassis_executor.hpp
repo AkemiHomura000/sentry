@@ -33,6 +33,7 @@ public:
     FAST,
     STOP,
     ROTATE,
+    PURSUIT,
   };
   ChassisExecutor(const sp_decision::Blackboard::Ptr &blackboard_ptr);
   typedef std::shared_ptr<ChassisExecutor> Ptr;
@@ -45,6 +46,7 @@ public:
   void VelStop();
   void Stop();
   void Idle();
+  void Pursuit(double pos_x, double pos_y);
   void SendDataToPlan(double pos_x, double pos_y);
   bool GetMoveStatus();
   bool move_status = 0;                               // 移动完成

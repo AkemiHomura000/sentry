@@ -2,7 +2,7 @@
 #define PURSUIT_HPP
 
 #include "node/behavior_tree.h"
-
+#include "math.h"
 namespace sp_decision
 {
     class PursuitBehavior : public ActionNode
@@ -17,6 +17,10 @@ namespace sp_decision
 
     private:
         void pursuit();
+        void armor_status_update();
+        bool armor_tracked_ = 0;
+        double xyz_map[3];
+        double distance = 0;
     };
 } // namespace robot_decision
 

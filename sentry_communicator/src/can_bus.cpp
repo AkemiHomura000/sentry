@@ -54,7 +54,7 @@ namespace sentry_communicator
             referee_info_msg_.game_progress = frame.data[4];
             referee_info_msg_.stage_remain_time = (uint16_t)((frame.data[5] << 8u) | frame.data[6]);
 
-            referee_info_pub_.publish(referee_info_msg_);
+            //referee_info_pub_.publish(referee_info_msg_);
 
             // Robot_ID = frame.data[0];
             // Keyboard = frame.data[1];

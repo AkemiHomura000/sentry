@@ -12,6 +12,7 @@
 #include <nav_msgs/Odometry.h>
 #include <robot_msg/MatchMsg.h>
 #include <robot_msg/RefereeInfoMsg.h>
+#include <robot_msg/Armor.h>
 #include <ros/ros.h>
 #include <geometry_msgs/Twist.h>
 #include <actionlib_msgs/GoalStatusArray.h>
@@ -32,6 +33,7 @@ namespace sp_decision
     std::mutex nav_cmd_vel_cbk_mutex;
     std::mutex goal_status_mutex;
     std::mutex referee_info_mutex;
+    std::mutex armor_mutex;
     void ResetFlag();
 
     /**
@@ -63,9 +65,11 @@ namespace sp_decision
     uint8_t game_progress;
     uint16_t stage_remain_time;
     uint16_t robot_hp_ = 600;
-    uint16_t robot_HP_;//敌方烧饼血量
+    uint16_t robot_HP_; // 敌方烧饼血量
     uint16_t robot_bullet_;
     uint16_t base_HP_ = 3000;
+    ros::Time time_received_armor_;
+    robot_msg::Armor armor_;
     nav_msgs::Odometry robot_pose_;
 
     /**
@@ -79,7 +83,7 @@ namespace sp_decision
      */
     geometry_msgs::Twist vel_msg_sub_;
 
-    // 比赛状�?
+    // 比赛状态?
     enum class MatchSatuts
     {
       TO_BEGIN,
@@ -88,12 +92,13 @@ namespace sp_decision
     };
     MatchSatuts game_status_;
 
-    // 动作状�?
+    // 动作状态?
     enum class Action_Lock
     {
       ADD_BLOOD,
       BACKWARD_DEFENCE,
       RETREAT,
+      PURSUIT,
       ATTACK,
       PATROL,
       JUDGING,
@@ -103,14 +108,16 @@ namespace sp_decision
     /*
      *@brife 决策所需变量
      */
-    int available_hp_ = 600; // 剩余可加血�?
+    int available_hp_ = 600; // 剩余可加血量?
     bool plan_get_ = 0;      // 是否规划出路径规划出路径
-    bool base_attacked_ = 0; // 基地受击状�?
-    ros::Time current_time;  // 用于基地受击状态更�?
+    bool base_attacked_ = 0; // 基地受击状态?
+    ros::Time current_time;  // 用于基地受击状态更新?
     int current_hp;
     bool status_init = 0; // 状态初始化
     ros::Time time_1;
     bool attacked_violently_ = 0; // 掉血速度过快
+    bool armor_received_ = 0;//装甲板接收状态
+
   private:
     ros::NodeHandle nh_;
     ros::Subscriber match_status_sub_;
@@ -120,17 +127,20 @@ namespace sp_decision
     ros::Subscriber cmd_vel_sub_;
     ros::Subscriber goal_status_sub_;
     ros::Subscriber referee_info_sub_;
+    ros::Subscriber armor_sub_;
 
     bool robot_odom_received_;
     bool match_state_received_;
     bool goal_status_received_;
     bool referee_info_received_;
+
     void GoalStatusCallback(const actionlib_msgs::GoalStatusArray::ConstPtr &msg);
     void MatchStatusCallback(const robot_msg::MatchMsg::ConstPtr msg);
     void RobotPoseCallback(const nav_msgs::Odometry::ConstPtr msg);
     void RefereeDataCallback(const geometry_msgs::Point::ConstPtr &msg);
     void CmdVelDataCallback(const geometry_msgs::Twist &msg);
     void RefereeInfoCallback(const robot_msg::RefereeInfoMsg::ConstPtr &msg);
+    void ArmorCallback(const robot_msg::Armor::ConstPtr &msg);
   };
 } // namespace sp_decision
 #endif

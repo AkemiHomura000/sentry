@@ -14,7 +14,7 @@ namespace sp_decision
                                           &Blackboard::RefereeDataCallback, this);
         cmd_vel_sub_ = nh_.subscribe("cmd_vel", 10, &Blackboard::CmdVelDataCallback, this);
         goal_status_sub_ = nh_.subscribe("move_base/status", 10, &Blackboard::GoalStatusCallback, this);
-
+        armor_sub_ = nh_.subscribe("/armor", 10, &Blackboard::ArmorCallback, this);
         nh_.param("min_hp", min_hp_, 200);
         nh_.param("min_bullet", min_bullet_, 100);
         nh_.param("min_outpost", min_outpost_, 300);
@@ -76,7 +76,6 @@ namespace sp_decision
         match_state_received_ = true;
         match_status_cbk_mutex.unlock();
     }
-
     void Blackboard::RobotPoseCallback(const nav_msgs::Odometry::ConstPtr msg)
     {
         robot_odom_cbk_mutex.lock();
@@ -95,7 +94,7 @@ namespace sp_decision
     void Blackboard::RefereeInfoCallback(const robot_msg::RefereeInfoMsg::ConstPtr &msg)
     {
         referee_info_mutex.lock();
-         // 判断比赛进程
+        // 判断比赛进程
         if (game_progress < 4)
         {
             game_status_ = MatchSatuts::TO_BEGIN;
@@ -131,6 +130,14 @@ namespace sp_decision
         game_progress = msg->game_progress;
         stage_remain_time = msg->stage_remain_time;
         referee_info_mutex.unlock();
+    }
+    void Blackboard::ArmorCallback(const robot_msg::Armor::ConstPtr &msg)
+    {
+        armor_mutex.lock();
+        armor_received_=1;
+        time_received_armor_=ros::Time::now();
+        armor_ = *msg;
+        armor_mutex.unlock();
     }
     void Blackboard::CmdVelDataCallback(const geometry_msgs::Twist &msg)
     {

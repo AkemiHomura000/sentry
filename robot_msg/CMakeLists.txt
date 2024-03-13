@@ -13,7 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   message_generation
 )
-
+find_package(geometry_msgs REQUIRED)
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -53,6 +53,7 @@ add_message_files(
    RobotStateMsg.msg
    MatchMsg.msg
    RefereeInfoMsg.msg
+   Armor.msg
 )
 
 ## Generate services in the 'srv' folder
@@ -72,6 +73,7 @@ add_message_files(
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
    DEPENDENCIES
+   geometry_msgs
 )
 
 ################################################

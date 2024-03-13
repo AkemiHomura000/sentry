@@ -1,6 +1,5 @@
 #include <fake_info_publisher.h>
 #include <sstream>
-
 #include <chrono>
 void FakeInfoPublisher::initialization(int id = 4)
 {
@@ -113,7 +112,6 @@ void FakeInfoPublisher::UserSetStatus(int match_state, int robot_hp, int robot_b
   match_msg_.robot_bullet = robot_bullet;
   referee_msg_.base_HP = base_hp;
 }
-
 std::string userinput;
 int userorder[4];
 std::string playerorder[3];
@@ -133,7 +131,6 @@ void FakeInfoPublisher::SwitchScenarios(int id)
   case 4:
   {
     std::cout << "依次键入数据 : 比赛状�? 血�? 弹丸 前哨�?" << std::endl;
-
     std::getline(std::cin, userinput);
     std::istringstream userstr(userinput);
     // �? std::istringstream 中提取整数，并存储在 vector �?
@@ -181,7 +178,6 @@ void FakeInfoPublisher::FakeRefereeDataPub()
 {
   fake_referee_data_publisher_.publish(lower_referee_data_);
 }
-
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "sp_decision_node");
@@ -212,6 +208,5 @@ int main(int argc, char **argv)
     fakeinfo.FakeInfoPub();
     r.sleep();
   }
-
   return 0;
 }

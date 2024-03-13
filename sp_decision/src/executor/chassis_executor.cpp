@@ -111,9 +111,14 @@ void ChassisExecutor::Cruisr(double pos_x, double pos_y)
     robotStatePub(RobotState::CRUISR);
     SendDataToPlan(pos_x, pos_y);
 }
-void ChassisExecutor::VelIdle() 
+void ChassisExecutor::Pursuit(double pos_x, double pos_y)
 {
-   robotStatePub(RobotState::ROTATE);
+    robotStatePub(RobotState::PURSUIT);
+    SendDataToPlan(pos_x, pos_y);
+}
+void ChassisExecutor::VelIdle()
+{
+    robotStatePub(RobotState::ROTATE);
     SendDataToPlan(0, 0);
 }
 void ChassisExecutor::VelStop()
