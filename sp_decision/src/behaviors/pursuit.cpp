@@ -35,11 +35,15 @@ namespace sp_decision
                 if (blackboard_ptr_->armor_.track_status == 1)
                 {
                     armor_tracked_ = true;
-                    xyz_map[0] = blackboard_ptr_->armor_.pose.position.x;
-                    xyz_map[1] = blackboard_ptr_->armor_.pose.position.y;
-                    xyz_map[2] = blackboard_ptr_->armor_.pose.position.z;
-                    distance = sqrt(pow(xyz_map[0] - blackboard_ptr_->robot_pose_.pose.pose.position.x, 2) +
-                                    pow(xyz_map[1] - blackboard_ptr_->robot_pose_.pose.pose.position.y, 2));
+                    if (sqrt(pow(xyz_map[0] - blackboard_ptr_->robot_pose_.pose.pose.position.x, 2) +
+                             pow(xyz_map[1] - blackboard_ptr_->robot_pose_.pose.pose.position.y, 2)) > 0.1)
+                    {
+                        xyz_map[0] = blackboard_ptr_->armor_.pose.position.x;
+                        xyz_map[1] = blackboard_ptr_->armor_.pose.position.y;
+                        xyz_map[2] = blackboard_ptr_->armor_.pose.position.z;
+                        distance = sqrt(pow(xyz_map[0] - blackboard_ptr_->robot_pose_.pose.pose.position.x, 2) +
+                                        pow(xyz_map[1] - blackboard_ptr_->robot_pose_.pose.pose.position.y, 2));
+                    }
                 }
                 else
                 {
