@@ -21,7 +21,7 @@ void ChassisExecutor::SendDataToPlan(double pos_x, double pos_y)
 {
     if (GetMoveStatus())
     {
-        ROS_INFO("reached");
+        //ROS_INFO("reached");
     }
     if (target_pose_.pose.position.x != pos_x || target_pose_.pose.position.y != pos_y)
     {

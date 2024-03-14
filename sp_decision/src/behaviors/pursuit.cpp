@@ -7,18 +7,22 @@ namespace sp_decision
         armor_status_update();
         if (blackboard_ptr_->action_status_ >= Blackboard::Action_Lock::PURSUIT)
         {
-            if (armor_tracked_ && distance < 9)
+            if (armor_tracked_ && distance < 9 && blackboard_ptr_->robot_HP_ < 100)
             {
                 ROS_INFO("pursuit");
                 pursuit();
                 log_exe_ptr_->info("behavior: pursuit");
+                blackboard_ptr_->action_status_ = Blackboard::Action_Lock::PURSUIT;
                 return BehaviorState::SUCCESS;
             }
+            
             else
             {
+                blackboard_ptr_->action_status_ = Blackboard::Action_Lock::JUDGING;
                 return BehaviorState::FAILURE;
             }
         }
+        blackboard_ptr_->action_status_ = Blackboard::Action_Lock::JUDGING;
         return BehaviorState::FAILURE;
     }
     void PursuitBehavior::pursuit()

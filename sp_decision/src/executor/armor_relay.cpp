@@ -5,7 +5,7 @@ int main(int argc, char **argv)
     ros::NodeHandle nh;
     tf2_ros::Buffer tfBuffer;
     tf2_ros::TransformListener tfListener(tfBuffer);
-    ros::Publisher armor_pub_= nh.advertise<robot_msg::Armor>("/armor", 1);
+    ros::Publisher armor_pub_ = nh.advertise<robot_msg::Armor>("/armor", 1);
     robot_msg::Armor armor_sentry;
     armor_sentry.number = 7;
     armor_sentry.type = "sentry";
@@ -18,13 +18,19 @@ int main(int argc, char **argv)
     src_pose.pose.orientation.w = 1.0;
     geometry_msgs::PoseStamped dst_pose;
 
-    TCPClient client("127.0.0.1", 12345);
-    if (client.setup())
+    TCPServer server;
+    if (!server.start())
+    {
+        std::cerr << "启动服务器失败" << std::endl;
+        return 1;
+    }
+    // 接受客户端连接
+    if (server.acceptConnection())
     {
         while (ros::ok)
         {
-            std::string receivedData = client.receive();
-            std::vector<std::string> splittedData = client.splitString(receivedData, ',');
+            std::string receivedData = server.receive();
+            std::vector<std::string> splittedData = server.splitString(receivedData, ',');
             std::cout << "Received data: ";
             std::vector<double> data;
             for (const auto &str : splittedData)
@@ -58,7 +64,6 @@ int main(int argc, char **argv)
                              armor_sentry.pose.position.y,
                              armor_sentry.pose.position.z);
                     armor_pub_.publish(armor_sentry);
-                    
                 }
                 catch (tf2::TransformException &ex)
                 {

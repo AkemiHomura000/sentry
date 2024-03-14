@@ -29,10 +29,12 @@ void FakeInfoPublisher::Test(int id, FakeInfoPublisher *fakeinfo)
   switch (id)
   {
   case 1:
+     referee_msg_.stage_remain_time=300;
     referee_msg_.base_HP = 3000;
     referee_msg_.game_progress = 3;
     break;
   case 2:
+   referee_msg_.stage_remain_time=300;
     referee_msg_.base_HP = 3000;
     referee_msg_.game_progress = 4;
     break;
@@ -50,7 +52,9 @@ void FakeInfoPublisher::Test(int id, FakeInfoPublisher *fakeinfo)
     }
     referee_msg_.base_HP = 3000;
     referee_msg_.stage_remain_time = userorder[0];
+    ROS_INFO("time%d",referee_msg_.stage_remain_time);
     match_msg_.robot_hp = userorder[1];
+      ROS_INFO("hp%d",match_msg_.robot_hp);
     break;
   }
   case 4:
@@ -170,6 +174,7 @@ void FakeInfoPublisher::SwitchScenarios(int id)
 
 void FakeInfoPublisher::FakeInfoPub()
 {
+  fake_info_publihser_.publish(match_msg_);
   fake_referee_info_publisher_.publish(referee_msg_);
   fake_referee_data_publisher_.publish(lower_referee_data_);
 }

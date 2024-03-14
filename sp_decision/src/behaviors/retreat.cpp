@@ -7,8 +7,6 @@ namespace sp_decision
         /**
          * @brief: 哨兵掉血过快撤退
          */
-        ROS_INFO("retreat_judge");
-        ROS_INFO("-------------------- %d", blackboard_ptr_->action_status_);
         if (blackboard_ptr_->action_status_ >= Blackboard::Action_Lock::RETREAT)
         {
             if (blackboard_ptr_->attacked_violently_)

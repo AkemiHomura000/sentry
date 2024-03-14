@@ -65,7 +65,7 @@ namespace sp_decision
     uint8_t game_progress;
     uint16_t stage_remain_time;
     uint16_t robot_hp_ = 600;
-    uint16_t robot_HP_; // 敌方烧饼血量
+    uint16_t robot_HP_=600; // 敌方烧饼血量
     uint16_t robot_bullet_;
     uint16_t base_HP_ = 3000;
     ros::Time time_received_armor_;
@@ -115,6 +115,7 @@ namespace sp_decision
     int current_hp;
     bool status_init = 0; // 状态初始化
     ros::Time time_1;
+    bool sentry_attacked_=0;//烧饼受击状态
     bool attacked_violently_ = 0; // 掉血速度过快
     bool armor_received_ = 0;//装甲板接收状态
 

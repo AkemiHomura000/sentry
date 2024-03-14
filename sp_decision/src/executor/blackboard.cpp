@@ -57,7 +57,7 @@ namespace sp_decision
                 current_hp = msg->robot_hp;
                 status_init = 1;
             }
-            if (ros::Time::now().sec - time_1.sec > 3) // 3s更新一�?
+            if (ros::Time::now().sec - time_1.sec > 3) // 3s更新一次?
             {
                 if (current_hp - msg->robot_hp > 90)
                 {
@@ -110,7 +110,7 @@ namespace sp_decision
         // 更新基地受击状态?
         if (base_HP_ > msg->base_HP || base_attacked_)
         {
-            ROS_INFO("base :%f", msg->base_HP);
+            //ROS_INFO("base :%f", msg->base_HP);
             base_attacked_ = true;
             if (base_HP_ == msg->base_HP)
             {
@@ -127,6 +127,7 @@ namespace sp_decision
             }
         }
         base_HP_ = msg->base_HP;
+        robot_HP_ = msg->robot_HP;
         game_progress = msg->game_progress;
         stage_remain_time = msg->stage_remain_time;
         referee_info_mutex.unlock();
@@ -134,8 +135,8 @@ namespace sp_decision
     void Blackboard::ArmorCallback(const robot_msg::Armor::ConstPtr &msg)
     {
         armor_mutex.lock();
-        armor_received_=1;
-        time_received_armor_=ros::Time::now();
+        armor_received_ = 1;
+        time_received_armor_ = ros::Time::now();
         armor_ = *msg;
         armor_mutex.unlock();
     }
