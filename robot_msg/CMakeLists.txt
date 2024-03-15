@@ -51,6 +51,7 @@ find_package(geometry_msgs REQUIRED)
 add_message_files(
    FILES
    RobotStateMsg.msg
+   RobotHP.msg
    MatchMsg.msg
    RefereeInfoMsg.msg
    Armor.msg

@@ -9,6 +9,7 @@ namespace sentry_communicator
         : bus_name_(bus_name)
     {
         referee_info_pub_ = root_nh.advertise<robot_msg::RefereeInfoMsg>("referee_info",1000);
+        robot_HP_pub_ = root_nh.advertise<robot_msg::RobotHP>("Enemy_robot_HP",1000);
 
         while (!socket_can_.open(bus_name, boost::bind(&CanBus::frameCallback, this, _1), thread_priority) && ros::ok())
             ros::Duration(.5).sleep();
@@ -47,6 +48,48 @@ namespace sentry_communicator
     void CanBus::frameCallback(const can_frame &frame)
     {
         std::lock_guard<std::mutex> guard(mutex_);
+        if (frame.can_id == 0x18D)
+        {
+            robot_HP_msg_.Hero_HP = 
+                (uint16_t)((frame.data[0] << 8u) | frame.data[1]);
+            robot_HP_msg_.Engineer_HP = 
+                (uint16_t)((frame.data[2] << 8u) | frame.data[3]);
+            robot_HP_msg_.Infantry_3_HP =
+                (uint16_t)((frame.data[4] << 8u) | frame.data[5]);
+            robot_HP_msg_.Infantry_4_HP =
+                (uint16_t)((frame.data[6] << 8u) | frame.data[7]);
+            if (lower_data_updated_ == true && upper_data_updated_ == false)
+            {
+                // 发布数据
+                robot_HP_pub_.publish(robot_HP_msg_);
+            }
+            else 
+            {
+                upper_data_updated_ = true;
+            }
+        }
+
+        if (frame.can_id == 0x18E)
+        {
+            robot_HP_msg_.Infantry_5_HP = 
+                (uint16_t)((frame.data[0] << 8u) | frame.data[1]);
+            robot_HP_msg_.Sentry_HP = 
+                (uint16_t)((frame.data[2] << 8u) | frame.data[3]);
+            robot_HP_msg_.OutPose_HP =
+                (uint16_t)((frame.data[4] << 8u) | frame.data[5]);
+            robot_HP_msg_.Base_HP =
+                (uint16_t)((frame.data[6] << 8u) | frame.data[7]);
+            if (upper_data_updated_ == true && lower_data_updated_ == false)
+            {
+                // 发布数据
+                robot_HP_pub_.publish(robot_HP_msg_);
+            }
+            else 
+            {
+                lower_data_updated_ = true;
+            }
+        }
+        
         if(frame.can_id == 0x18F){
 
             referee_info_msg_.base_HP = (uint16_t)((frame.data[0] << 8u) | frame.data[1]);
@@ -67,6 +110,7 @@ namespace sentry_communicator
             // lower_com_data.z = Keyboard;
             // lowercom_data_pub.publish(lower_com_data);
         }
+
     }
 
 } // namespace : sentry_communicator

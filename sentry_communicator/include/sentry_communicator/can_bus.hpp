@@ -10,6 +10,7 @@
 #include <tf/transform_broadcaster.h>
 
 #include <robot_msg/RefereeInfoMsg.h>
+#include <robot_msg/RobotHP.h>
 
 namespace sentry_communicator
 {
@@ -50,8 +51,14 @@ namespace sentry_communicator
         ros::Publisher referee_info_pub_;
         robot_msg::RefereeInfoMsg 
             referee_info_msg_;
+
+        ros::Publisher robot_HP_pub_;
+        robot_msg::RobotHP robot_HP_msg_;
+        // 上半数据更新标记
+        bool upper_data_updated_ = false;
+        // 下半数据更新标记
+        bool lower_data_updated_ = false;
         
-        uint16_t base_HP,robot_HP,game_progress,stage_remain_time;
 
         // Lithesh : use realtime buffer to keep the multi-thread safe.
         realtime_tools::RealtimeBuffer<Command> realtime_buffer_;
