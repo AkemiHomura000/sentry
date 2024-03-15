@@ -7,7 +7,7 @@ namespace sp_decision
         armor_status_update();
         if (blackboard_ptr_->action_status_ >= Blackboard::Action_Lock::PURSUIT)
         {
-            if (armor_tracked_ && distance < 9 && blackboard_ptr_->robot_HP_ < 100)
+            if (armor_tracked_ && distance < 9 && blackboard_ptr_->robot_HP_ < 100||blackboard_ptr_->test_id==6)
             {
                 ROS_INFO("pursuit");
                 pursuit();

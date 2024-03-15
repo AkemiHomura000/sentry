@@ -29,12 +29,12 @@ void FakeInfoPublisher::Test(int id, FakeInfoPublisher *fakeinfo)
   switch (id)
   {
   case 1:
-     referee_msg_.stage_remain_time=300;
+    referee_msg_.stage_remain_time = 300;
     referee_msg_.base_HP = 3000;
     referee_msg_.game_progress = 3;
     break;
   case 2:
-   referee_msg_.stage_remain_time=300;
+    referee_msg_.stage_remain_time = 300;
     referee_msg_.base_HP = 3000;
     referee_msg_.game_progress = 4;
     break;
@@ -52,9 +52,9 @@ void FakeInfoPublisher::Test(int id, FakeInfoPublisher *fakeinfo)
     }
     referee_msg_.base_HP = 3000;
     referee_msg_.stage_remain_time = userorder[0];
-    ROS_INFO("time%d",referee_msg_.stage_remain_time);
+    ROS_INFO("time%d", referee_msg_.stage_remain_time);
     match_msg_.robot_hp = userorder[1];
-      ROS_INFO("hp%d",match_msg_.robot_hp);
+    ROS_INFO("hp%d", match_msg_.robot_hp);
     break;
   }
   case 4:
@@ -90,9 +90,12 @@ void FakeInfoPublisher::Test(int id, FakeInfoPublisher *fakeinfo)
       fakeinfo->FakeInfoPub();
       ros::Duration(0.1).sleep();
     }
+    break;
   }
-    // match_msg_.test_id = id;
+  case 6:
+    match_msg_.test_id = 6;
   }
+    match_msg_.test_id = id;
 }
 void FakeInfoPublisher::GameStart() { match_msg_.match_state = 1; }
 void FakeInfoPublisher::Attacked()
