@@ -20,6 +20,7 @@ namespace sp_decision
         void armor_status_update();
         bool armor_tracked_ = 0;
         double xyz_map[3];
+         double xyz_target_map[3];
         double distance = 0;
     };
 } // namespace robot_decision

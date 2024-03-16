@@ -295,11 +295,11 @@ namespace local_planner
             }
             case RobotState::PURSUIT:
             {
-                if (distance > 1.5)
+                if (distance > 2)
                 {
                     cmd_vel.angular.z = max_vel_theta_;
                     // 正常行驶速度
-                    v = max_v_ * 1.8;
+                    v = max_v_ * 1.6;
                     // 遇到障碍减速
                     ratio = 0.8;
                 }

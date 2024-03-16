@@ -16,7 +16,7 @@
 #include <ros/ros.h>
 #include <geometry_msgs/Twist.h>
 #include <actionlib_msgs/GoalStatusArray.h>
-
+#include "robot_msg/RobotHP.h"
 namespace sp_decision
 {
 
@@ -65,7 +65,7 @@ namespace sp_decision
     uint8_t game_progress;
     uint16_t stage_remain_time;
     uint16_t robot_hp_ = 600;
-    uint16_t robot_HP_=600; // 敌方烧饼血量
+    uint16_t Sentry_HP_=600; // 敌方烧饼血量
     uint16_t robot_bullet_;
     uint16_t base_HP_ = 3000;
     ros::Time time_received_armor_;
@@ -129,7 +129,7 @@ namespace sp_decision
     ros::Subscriber goal_status_sub_;
     ros::Subscriber referee_info_sub_;
     ros::Subscriber armor_sub_;
-
+    ros::Subscriber enemy_hp_sub_;
     bool robot_odom_received_;
     bool match_state_received_;
     bool goal_status_received_;
@@ -142,6 +142,7 @@ namespace sp_decision
     void CmdVelDataCallback(const geometry_msgs::Twist &msg);
     void RefereeInfoCallback(const robot_msg::RefereeInfoMsg::ConstPtr &msg);
     void ArmorCallback(const robot_msg::Armor::ConstPtr &msg);
+    void EnemyCallback(const robot_msg::RobotHP::ConstPtr &msg);
   };
 } // namespace sp_decision
 #endif

@@ -21,7 +21,10 @@ find_package(catkin REQUIRED COMPONENTS
   tf2_ros
   tf2_geometry_msgs
 )
+find_package(Eigen3 REQUIRED)
 
+
+include_directories(${EIGEN3_INCLUDE_DIR})
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES sp_decision

@@ -53,8 +53,8 @@ void FakeInfoPublisher::Test(int id, FakeInfoPublisher *fakeinfo)
     referee_msg_.base_HP = 3000;
     referee_msg_.stage_remain_time = userorder[0];
     ROS_INFO("time%d", referee_msg_.stage_remain_time);
-    match_msg_.robot_hp = userorder[1];
-    ROS_INFO("hp%d", match_msg_.robot_hp);
+    referee_msg_.robot_HP = userorder[1];
+    ROS_INFO("hp%d", referee_msg_.robot_HP);
     break;
   }
   case 4:
@@ -85,7 +85,7 @@ void FakeInfoPublisher::Test(int id, FakeInfoPublisher *fakeinfo)
     }
     for (int n = 0; n < 100; n++)
     {
-      match_msg_.robot_hp = 600 - 0.1 * n * userorder[0];
+      referee_msg_.robot_HP = 600 - 0.1 * n * userorder[0];
       referee_msg_.stage_remain_time = userorder[1];
       fakeinfo->FakeInfoPub();
       ros::Duration(0.1).sleep();
@@ -101,21 +101,21 @@ void FakeInfoPublisher::GameStart() { match_msg_.match_state = 1; }
 void FakeInfoPublisher::Attacked()
 {
   match_msg_.match_state = 1;
-  match_msg_.robot_hp = rng_.generateRandomInt(0, 200);
+  referee_msg_.robot_HP = rng_.generateRandomInt(0, 200);
   match_msg_.robot_bullet = rng_.generateRandomInt(0, 750);
   referee_msg_.base_HP = rng_.generateRandomInt(0, 600);
 }
 void FakeInfoPublisher::LackBullet()
 {
   match_msg_.match_state = 1;
-  match_msg_.robot_hp = rng_.generateRandomInt(0, 400);
+  referee_msg_.robot_HP = rng_.generateRandomInt(0, 400);
   match_msg_.robot_bullet = rng_.generateRandomInt(0, 100);
   referee_msg_.base_HP = rng_.generateRandomInt(0, 600);
 }
-void FakeInfoPublisher::UserSetStatus(int match_state, int robot_hp, int robot_bullet, int base_hp)
+void FakeInfoPublisher::UserSetStatus(int match_state, int robot_HP, int robot_bullet, int base_hp)
 {
   match_msg_.match_state = match_state;
-  match_msg_.robot_hp = robot_hp;
+  referee_msg_.robot_HP = robot_HP;
   match_msg_.robot_bullet = robot_bullet;
   referee_msg_.base_HP = base_hp;
 }

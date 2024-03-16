@@ -33,7 +33,7 @@ pcd_save:
                                  # -1 : all frames will be saved in ONE pcd file, may lead to memory crash when having too much frames.
 
 cloud_filter:
-   max_z: 0.2 # z轴点云最大值
+   max_z: 0.3 # z轴点云最大值
    min_z: 0.1 # z轴点云最小值
    radius: 0.5 # 半径滤波半径
    min_neighbors: 2 # 半径滤波个数
