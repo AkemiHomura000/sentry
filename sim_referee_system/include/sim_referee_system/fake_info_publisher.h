@@ -20,8 +20,8 @@ public:
         nh_.advertise<geometry_msgs::Point>("referee_data", 1);
     fake_referee_info_publisher_ =
         nh_.advertise<robot_msg::RefereeInfoMsg>("referee_info", 1);
-enemy_hp_publisher_ =
-        nh_.advertise<robot_msg::RefereeInfoMsg>("Enemy_robot_HP", 1);
+    enemy_hp_publisher_ =
+        nh_.advertise<robot_msg::RobotHP>("Enemy_robot_HP", 1);
     match_msg_.match_state = 0;
     referee_msg_.game_progress = 1;
     referee_msg_.stage_remain_time = 300;
@@ -51,7 +51,7 @@ private:
   ros::Publisher fake_info_publihser_;
   ros::Publisher fake_referee_data_publisher_;
   ros::Publisher fake_referee_info_publisher_;
-   ros::Publisher enemy_hp_publisher_;
+  ros::Publisher enemy_hp_publisher_;
   robot_msg::MatchMsg match_msg_;
   robot_msg::RefereeInfoMsg referee_msg_;
   robot_msg::RobotHP enemy_hp_;

@@ -29,7 +29,7 @@ namespace sp_decision
 
     void AddBloodBehavior::Go2Buff()
     {
-        chassis_exe_ptr_->Move(blackboard_ptr_->buff_pos_[1].x,
-                                 blackboard_ptr_->buff_pos_[1].y);
+        chassis_exe_ptr_->Move(blackboard_ptr_->buff_pos_[0].x,
+                                 blackboard_ptr_->buff_pos_[0].y);
     }
 }

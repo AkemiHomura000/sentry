@@ -14,7 +14,7 @@ namespace sentry_communicator
         while (!socket_can_.open(bus_name, boost::bind(&CanBus::frameCallback, this, _1), thread_priority) && ros::ok())
             ros::Duration(.5).sleep();
         ROS_INFO("[CAN_BUS] : Successfully connected to %s.", bus_name.c_str());
-        cmd_chassis_sub_ = root_nh.subscribe<geometry_msgs::Twist>("/cmd_vel", 1, &CanBus::cmdChassisCallback, this);
+        cmd_chassis_sub_ = root_nh.subscribe<geometry_msgs::Twist>("/sentry/cmd_vel", 1, &CanBus::cmdChassisCallback, this);
         
         frame_.can_id = 0x111;
         frame_.can_dlc = 8;
@@ -97,7 +97,7 @@ namespace sentry_communicator
             referee_info_msg_.game_progress = frame.data[4];
             referee_info_msg_.stage_remain_time = (uint16_t)((frame.data[5] << 8u) | frame.data[6]);
 
-            referee_info_pub_.publish(referee_info_msg_);
+            //referee_info_pub_.publish(referee_info_msg_);
 
             // Robot_ID = frame.data[0];
             // Keyboard = frame.data[1];

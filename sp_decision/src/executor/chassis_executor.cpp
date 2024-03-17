@@ -21,10 +21,12 @@ void ChassisExecutor::SendDataToPlan(double pos_x, double pos_y)
 {
     if (GetMoveStatus())
     {
-        //ROS_INFO("reached");
+        // ROS_INFO("reached");
     }
-    if (target_pose_.pose.position.x != pos_x || target_pose_.pose.position.y != pos_y)
+    double distance = sqrt(pow(blackboard_->robot_pose_.pose.pose.position.x - pos_x, 2) + pow(blackboard_->robot_pose_.pose.pose.position.y - pos_y, 2));
+    if (target_pose_.pose.position.x != pos_x || target_pose_.pose.position.y != pos_y||(pos_x==0&&pos_y==0))//持续发布目标点，否则动态避障不生效
     {
+        last_time = ros::Time::now();
         target_pose_.header.frame_id = "map";
         target_pose_.header.stamp = ros::Time::now();
         target_pose_.pose.position.x = pos_x;
@@ -36,12 +38,27 @@ void ChassisExecutor::SendDataToPlan(double pos_x, double pos_y)
         goal_.target_pose = target_pose_;
         set_goal_pub_.publish(goal_);
     }
+    // ros::Duration(0.1).sleep();//增加失去路径时原地小陀螺
+    // if (!blackboard_->plan_get_)
+    // {
+    //     robotStatePub(RobotState::ROTATE);
+    //     target_pose_.header.frame_id = "map";
+    //     target_pose_.header.stamp = ros::Time::now();
+    //     target_pose_.pose.position.x = 0.0;
+    //     target_pose_.pose.position.y = 0.0;
+    //     target_pose_.pose.orientation.x = 0.0;
+    //     target_pose_.pose.orientation.y = 0.0;
+    //     target_pose_.pose.orientation.z = 0.0;
+    //     target_pose_.pose.orientation.w = 1.0;
+    //     goal_.target_pose = target_pose_;
+    //     set_goal_pub_.publish(goal_);
+    // }
 }
 bool ChassisExecutor::GetMoveStatus()
 {
     double distance = sqrt(pow(blackboard_->robot_pose_.pose.pose.position.x - target_pose_.pose.position.x, 2) + pow(blackboard_->robot_pose_.pose.pose.position.y - target_pose_.pose.position.y, 2));
     ROS_INFO("distance %f", distance);
-    if (distance < 0.15)
+    if (distance < 0.2)
     {
         move_status = true;
         return 1;
@@ -69,7 +86,7 @@ void ChassisExecutor::QueueMove(std::vector<sp_decision::Blackboard::Point> poin
     if (num == -1)
     {
         action_status = action;
-        for (int i = 0; i < points.size(); i++)
+        for (int i = 0; i <200; i++)
         {
             SendDataToPlan(points[0].x, points[0].y);
             ros::Duration(0.2).sleep();
@@ -86,6 +103,39 @@ void ChassisExecutor::QueueMove(std::vector<sp_decision::Blackboard::Point> poin
             VelIdle();
             ros::Duration(stay_time).sleep();
         }
+        for (int i = num + 1; i < 1000; i++)
+        {
+            num = i % points.size();
+            SendDataToPlan(points[num].x, points[num].y);
+            ros::Duration(0.2).sleep();
+            if (blackboard_->plan_get_)
+            {
+                break;
+            }
+        }
+    }
+}
+void ChassisExecutor::QueueMoveSlow(std::vector<sp_decision::Blackboard::Point> points, sp_decision::Blackboard::Action_Lock action)
+{
+    robotStatePub(RobotState::SlOW);
+    if (action_status != action)
+    {
+        num = -1;
+    }
+    if (num == -1)
+    {
+        action_status = action;
+        for (int i = 0; i <200; i++)
+        {
+            SendDataToPlan(points[0].x, points[0].y);
+            ros::Duration(0.2).sleep();
+            num++;
+            if (blackboard_->plan_get_)
+                break;
+        }
+    }
+    else if (GetMoveStatus())
+    {
         for (int i = num + 1; i < 1000; i++)
         {
             num = i % points.size();

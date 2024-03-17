@@ -180,6 +180,7 @@ void FakeInfoPublisher::FakeInfoPub()
   fake_info_publihser_.publish(match_msg_);
   fake_referee_info_publisher_.publish(referee_msg_);
   fake_referee_data_publisher_.publish(lower_referee_data_);
+  enemy_hp_publisher_.publish(enemy_hp_);
 }
 
 void FakeInfoPublisher::FakeRefereeDataPub()

@@ -85,6 +85,7 @@ namespace local_planner
             STOP,
             ROTATE,
             PURSUIT,
+            SLOW,
         };
         RobotState state_;
         ros::Subscriber robot_state_sub_;
@@ -213,6 +214,9 @@ namespace local_planner
             case 6:
                 state_ = RobotState::PURSUIT;
                 break;
+            case 7:
+                state_ = RobotState::SLOW;
+                break;
             default:
                 ROS_WARN("Invalid robot state value: %d", robot_state_value);
                 return;
@@ -238,7 +242,7 @@ namespace local_planner
             {
             case RobotState::MOVE:
             {
-                if (distance > 0.5)
+                if (distance > 0.8)
                 {
                     cmd_vel.angular.z = 0;
                     // 正常行驶速度
@@ -250,7 +254,7 @@ namespace local_planner
                 {
                     cmd_vel.angular.z = 0;
                     // 正常行驶速度
-                    v = 0.6 * max_v_;
+                    v = 0.3 * max_v_;
                     // 遇到障碍减速
                     ratio = 0.8;
                 }
@@ -295,7 +299,7 @@ namespace local_planner
             }
             case RobotState::PURSUIT:
             {
-                if (distance > 2)
+                if (distance > 0.5)
                 {
                     cmd_vel.angular.z = max_vel_theta_;
                     // 正常行驶速度
@@ -310,6 +314,27 @@ namespace local_planner
                     // 遇到障碍减速
                     ratio = 1.0;
                 }
+                break;
+            }
+            case RobotState::SLOW:
+            {
+                if (distance > 0.4)
+                {
+                    cmd_vel.angular.z = max_vel_theta_;
+                    // 正常行驶速度
+                    v = max_v_ * 1;
+                    // 遇到障碍减速
+                    ratio = 0.8;
+                }
+                else
+                {
+                    cmd_vel.angular.z = 0;
+                    // 正常行驶速度
+                    v = max_v_ * 0.4;
+                    // 遇到障碍减速
+                    ratio = 0.8;
+                }
+
                 break;
             }
             default:

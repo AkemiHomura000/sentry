@@ -8,6 +8,7 @@ namespace sp_decision
         {
             if (blackboard_ptr_->action_status_ != Blackboard::Action_Lock::ATTACK)
             {
+                ROS_INFO("status-----------%d", blackboard_ptr_->action_status_);
                 num_1 = 0; // 重置标识符
                 num_2 = 0;
             }
@@ -33,6 +34,7 @@ namespace sp_decision
                 attack_point_2();
                 log_exe_ptr_->info("behavior: attack");
                 blackboard_ptr_->action_status_ = Blackboard::Action_Lock::ATTACK;
+                ROS_INFO("status    %d", blackboard_ptr_->action_status_);
                 return BehaviorState::SUCCESS;
             }
         }
@@ -53,14 +55,15 @@ namespace sp_decision
     }
     void AttackBehavior::attack_point_2() // TODO：补充云台方向控制
     {
-        if (num_2 == 0)
-        {
-            chassis_exe_ptr_->FastMove(blackboard_ptr_->attack_pos[2].x, blackboard_ptr_->attack_pos[2].y);
-            num_2++;
-        }
-        if (chassis_exe_ptr_->GetMoveStatus())
-        {
-            chassis_exe_ptr_->VelIdle();
-        }
+        // if (num_2 == 0)
+        // {
+        //     chassis_exe_ptr_->FastMove(blackboard_ptr_->attack_pos[2].x, blackboard_ptr_->attack_pos[2].y);
+        //     num_2++;
+        // }
+        // if (chassis_exe_ptr_->GetMoveStatus())
+        // {
+        //     chassis_exe_ptr_->VelIdle();
+        // }
+         chassis_exe_ptr_->QueueMove(blackboard_ptr_->attack_queue_pos,blackboard_ptr_->action_status_, 3);
     }
 }

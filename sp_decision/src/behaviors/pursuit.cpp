@@ -7,7 +7,8 @@ namespace sp_decision
         armor_status_update();
         if (blackboard_ptr_->action_status_ >= Blackboard::Action_Lock::PURSUIT)
         {
-            if (armor_tracked_ && distance < 9 && blackboard_ptr_->Sentry_HP_ < 100||blackboard_ptr_->test_id==6)
+
+            if (armor_tracked_ && distance < 9 && blackboard_ptr_->Sentry_HP_ < 100&&blackboard_ptr_->Sentry_HP_ >0 || blackboard_ptr_->test_id == 6)
             {
                 ROS_INFO("pursuit");
                 pursuit();
@@ -15,14 +16,14 @@ namespace sp_decision
                 blackboard_ptr_->action_status_ = Blackboard::Action_Lock::PURSUIT;
                 return BehaviorState::SUCCESS;
             }
-            
-            else
+            if (blackboard_ptr_->action_status_ == Blackboard::Action_Lock::PURSUIT)
             {
+
                 blackboard_ptr_->action_status_ = Blackboard::Action_Lock::JUDGING;
                 return BehaviorState::FAILURE;
             }
         }
-        blackboard_ptr_->action_status_ = Blackboard::Action_Lock::JUDGING;
+        // blackboard_ptr_->action_status_ = Blackboard::Action_Lock::JUDGING;
         return BehaviorState::FAILURE;
     }
     void PursuitBehavior::pursuit()
@@ -48,8 +49,8 @@ namespace sp_decision
                         distance = sqrt(pow(xyz_map[0] - blackboard_ptr_->robot_pose_.pose.pose.position.x, 2) +
                                         pow(xyz_map[1] - blackboard_ptr_->robot_pose_.pose.pose.position.y, 2));
                         double k = 2 / distance;
-                        xyz_target_map[1] = xyz_map[1]+k*(blackboard_ptr_->robot_pose_.pose.pose.position.y-xyz_map[1]);
-                        xyz_target_map[0]=xyz_map[0]+k*(blackboard_ptr_->robot_pose_.pose.pose.position.y-xyz_map[0]);
+                        xyz_target_map[1] = xyz_map[1] + k * (blackboard_ptr_->robot_pose_.pose.pose.position.y - xyz_map[1]);
+                        xyz_target_map[0] = xyz_map[0] + k * (blackboard_ptr_->robot_pose_.pose.pose.position.y - xyz_map[0]);
                     }
                 }
                 else

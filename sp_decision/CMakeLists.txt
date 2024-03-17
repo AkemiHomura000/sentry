@@ -63,3 +63,8 @@ add_executable(armor_relay src/executor/armor_relay.cpp)
 target_link_libraries(armor_relay 
   ${catkin_LIBRARIES}
 ) 
+add_executable(vel_relay src/vel_relay.cpp)
+
+target_link_libraries(vel_relay 
+  ${catkin_LIBRARIES}
+) 

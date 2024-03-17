@@ -1,0 +1,56 @@
+#include <ros/ros.h>
+#include <geometry_msgs/Twist.h>
+#include <robot_msg/RobotStateMsg.h>
+
+ros::Publisher sentry_cmd_vel_pub;
+geometry_msgs::Twist current_cmd_vel;
+enum RobotState
+{
+    MOVE,
+    CRUISR,
+    IDLE,
+    FAST,
+    STOP,
+    ROTATE,
+    PURSUIT,
+};
+robot_msg::RobotStateMsg state;
+void cmdVelCallback(const geometry_msgs::Twist::ConstPtr &msg)
+{
+    current_cmd_vel = *msg;
+    if (state.robot_state == RobotState::ROTATE)
+    {
+        current_cmd_vel.linear.x = 0.0;
+        current_cmd_vel.linear.y = 0.0;
+        current_cmd_vel.angular.z = 3.14;
+    }
+    sentry_cmd_vel_pub.publish(current_cmd_vel);
+}
+
+void robotStateCallback(const robot_msg::RobotStateMsg::ConstPtr &state_msg)
+{
+    // 根据RobotStateMsg的内容修改current_cmd_vel的值
+    // 示例：如果机器人状态为停止，则将线速度和角速度都设置为0
+    state.robot_state = state_msg->robot_state;
+}
+
+int main(int argc, char **argv)
+{
+    // 初始化ROS节点
+    ros::init(argc, argv, "cmd_vel_relay_node");
+    ros::NodeHandle nh;
+
+    // 创建一个订阅者，订阅/cmd_vel话题
+    ros::Subscriber cmd_vel_sub = nh.subscribe("/cmd_vel", 1, cmdVelCallback);
+
+    // 创建一个发布者，发布到/sentry/cmd_vel话题
+    sentry_cmd_vel_pub = nh.advertise<geometry_msgs::Twist>("/sentry/cmd_vel", 1);
+
+    // 创建一个订阅者，订阅/robot_state话题
+    ros::Subscriber robot_state_sub = nh.subscribe<robot_msg::RobotStateMsg>("/robot_state", 1, robotStateCallback);
+
+    // 循环等待回调函数
+    ros::spin();
+
+    return 0;
+}
