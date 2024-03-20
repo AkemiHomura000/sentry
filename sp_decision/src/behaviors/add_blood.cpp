@@ -9,6 +9,10 @@ namespace sp_decision
         {
             if (blackboard_ptr_->action_status_ == Blackboard::Action_Lock::ADD_BLOOD || (blackboard_ptr_->robot_hp_ < 120 && blackboard_ptr_->stage_remain_time > 60) || blackboard_ptr_->test_id == 1)
             {
+                if (blackboard_ptr_->action_status_ != Blackboard::Action_Lock::ADD_BLOOD) // 从其他状态进入会初始化
+                {
+                    status = 0;
+                }
                 blackboard_ptr_->action_status_ = Blackboard::Action_Lock::ADD_BLOOD;
                 if (blackboard_ptr_->robot_hp_ < 600 && blackboard_ptr_->available_hp_ > 0 && blackboard_ptr_->stage_remain_time > 60)
                 {
@@ -29,11 +33,86 @@ namespace sp_decision
 
     void AddBloodBehavior::Go2Buff()
     {
-        if (!chassis_exe_ptr_->Move(blackboard_ptr_->buff_pos_[0].x,
-                                    blackboard_ptr_->buff_pos_[0].y))
+        switch (status)
         {
-            chassis_exe_ptr_->Move(blackboard_ptr_->buff_pos_[1].x,
-                                    blackboard_ptr_->buff_pos_[1].y);
+        case 0:
+        {
+            if (chassis_exe_ptr_->Move(blackboard_ptr_->buff_pos_[0].x,
+                                       blackboard_ptr_->buff_pos_[0].y) != 2)
+            {
+                status = 1;
+            }
+            else
+            {
+                status = 2;
+            }
+            break;
         }
+        case 1:
+        {
+            if (chassis_exe_ptr_->Move(blackboard_ptr_->buff_pos_[0].x,
+                                       blackboard_ptr_->buff_pos_[0].y) == 0)
+            {
+                status = 1;
+            }
+            else if (chassis_exe_ptr_->Move(blackboard_ptr_->buff_pos_[0].x,
+                                            blackboard_ptr_->buff_pos_[0].y) == 1)
+            {
+                status = 3;
+            }
+            else if (chassis_exe_ptr_->Move(blackboard_ptr_->buff_pos_[0].x,
+                                           blackboard_ptr_->buff_pos_[0].y) == 2)
+            {
+                status = 2;
+            }
+            break;
+        }
+        case 2:
+        {
+            if (chassis_exe_ptr_->Move(blackboard_ptr_->buff_pos_[1].x,
+                                       blackboard_ptr_->buff_pos_[1].y) == 0)
+            {
+                status = 2;
+            }
+            else if (chassis_exe_ptr_->Move(blackboard_ptr_->buff_pos_[1].x,
+                                            blackboard_ptr_->buff_pos_[1].y) == 1)
+            {
+                status = 4;
+            }
+            else if (chassis_exe_ptr_->Move(blackboard_ptr_->buff_pos_[1].x,
+                                           blackboard_ptr_->buff_pos_[1].y) == 2)
+            {
+                status = 2; // 无法到达重复发送
+            }
+            break;
+        }
+        case 3:
+        {
+            chassis_exe_ptr_->Stop();
+            break;
+        }
+        case 4:
+        {
+            if (chassis_exe_ptr_->Move(blackboard_ptr_->buff_pos_[0].x,
+                                       blackboard_ptr_->buff_pos_[0].y) == 1)
+            {
+                status = 3;
+            }
+            break;
+        }
+        default:
+        {
+            std::cout << "Unknown status" << std::endl;
+            break;
+        }
+        }
+
+        // if (chassis_exe_ptr_->Move(blackboard_ptr_->buff_pos_[0].x,
+        //                            blackboard_ptr_->buff_pos_[0].y) == 2)
+        // {
+        //     status = 2;
+        //     if (chassis_exe_ptr_->Move(blackboard_ptr_->buff_pos_[1].x,
+        //                                blackboard_ptr_->buff_pos_[1].y) == 2)
+        // }
     }
 }

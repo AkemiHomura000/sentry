@@ -1,3 +1,6 @@
+/*
+*通过move_base_node/make_plan服务通信获取目标点状态，但是在运动过程中不可用，故弃用
+*/
 #include <ros/ros.h>
 #include <nav_msgs/GetPlan.h>
 #include <geometry_msgs/PoseStamped.h>

@@ -21,7 +21,12 @@
 
 // 给MoveBaseAction定义一个别名，方便创建对象
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> Client;
-
+enum Implementation
+{
+  IN_PROGRESS,
+  FINISHED,
+  FAILED,
+};
 class ChassisExecutor
 {
 public:
@@ -39,22 +44,23 @@ public:
   ChassisExecutor(const sp_decision::Blackboard::Ptr &blackboard_ptr);
   typedef std::shared_ptr<ChassisExecutor> Ptr;
   void robotStatePub(RobotState robot_state);
-  bool Move(double pos_x, double pos_y);
-  void QueueMove(std::vector<sp_decision::Blackboard::Point> points, sp_decision::Blackboard::Action_Lock action, int stay_time = 0); // 需保证不同动作调用该函数时不会混淆
-  void QueueMoveSlow(std::vector<sp_decision::Blackboard::Point> points, sp_decision::Blackboard::Action_Lock action);
-  bool FastMove(double pos_x, double pos_y);
-  void Cruisr(double pos_x, double pos_y);
-  void VelIdle();
-  void VelStop();
-  void Stop();
-  void Idle();
-  void Pursuit(double pos_x, double pos_y);
-  void SendDataToPlan(double pos_x, double pos_y);
+  Implementation Move(double pos_x, double pos_y);
+  Implementation QueueMove(std::vector<sp_decision::Blackboard::Point> points, sp_decision::Blackboard::Action_Lock action, int stay_time = 0); // 需保证不同动作调用该函数时不会混淆
+  Implementation QueueMoveSlow(std::vector<sp_decision::Blackboard::Point> points, sp_decision::Blackboard::Action_Lock action);
+  Implementation FastMove(double pos_x, double pos_y);
+  Implementation Cruisr(double pos_x, double pos_y);
+  Implementation VelIdle();
+  Implementation VelStop();
+  Implementation Stop();
+  Implementation Idle();
+  Implementation Pursuit(double pos_x, double pos_y);
+  Implementation SendDataToPlan(double pos_x, double pos_y);
   bool GetMoveStatus();
   bool move_status = 0;                                                                               // 移动完成
   int num = -1;                                                                                       // 目标点序号
   sp_decision::Blackboard::Action_Lock action_status = sp_decision::Blackboard::Action_Lock::JUDGING; // 记录调用QueueMove()的动作来源
   geometry_msgs::Twist sentry_cmdvel_;
+  Implementation exec_stauts;
 
 private:
   sp_decision::Blackboard::Ptr blackboard_;

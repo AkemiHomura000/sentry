@@ -129,7 +129,7 @@ namespace sp_decision
     bool sentry_attacked_ = 0;    // 烧饼受击状态
     bool attacked_violently_ = 0; // 掉血速度过快
     bool armor_received_ = 0;     // 装甲板接收状态
-
+    geometry_msgs::Point last_position;//记录位置
   private:
     ros::NodeHandle nh_;
     ros::Subscriber match_status_sub_;
