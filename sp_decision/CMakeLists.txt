@@ -53,18 +53,21 @@ add_executable(${PROJECT_NAME}
   src/behaviors/pursuit.cpp
   src/behaviors/patrol.cpp
 )
-
 target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
 )
 
 add_executable(armor_relay src/executor/armor_relay.cpp)
-
 target_link_libraries(armor_relay 
   ${catkin_LIBRARIES}
 ) 
-add_executable(vel_relay src/vel_relay.cpp)
 
+add_executable(vel_relay src/vel_relay.cpp)
 target_link_libraries(vel_relay 
+  ${catkin_LIBRARIES}
+) 
+
+add_executable(get_plan src/executor/move_base_test.cpp)
+target_link_libraries(get_plan 
   ${catkin_LIBRARIES}
 ) 
