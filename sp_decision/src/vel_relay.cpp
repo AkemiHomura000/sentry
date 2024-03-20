@@ -22,7 +22,7 @@ void cmdVelCallback(const geometry_msgs::Twist::ConstPtr &msg)
     {
         current_cmd_vel.linear.x = 0.0;
         current_cmd_vel.linear.y = 0.0;
-        current_cmd_vel.angular.z = 3.14;
+        current_cmd_vel.angular.z = 5;
     }
     sentry_cmd_vel_pub.publish(current_cmd_vel);
 }

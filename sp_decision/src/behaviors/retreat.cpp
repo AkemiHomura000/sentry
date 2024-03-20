@@ -12,7 +12,7 @@ namespace sp_decision
             if (blackboard_ptr_->attacked_violently_)
             {
                 ROS_INFO("retreat");
-                // RandomMode();
+                 RandomMode();
                 //  log_exe_ptr_->info("behavior[retreat]:", "fast move");
                 blackboard_ptr_->action_status_ = Blackboard::Action_Lock::RETREAT;
                 return BehaviorState::SUCCESS;
