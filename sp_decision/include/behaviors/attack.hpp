@@ -19,7 +19,7 @@ namespace sp_decision
     int num_1 = 0;
     int num_2 = 0;
     void attack_point_1(); // 保护我方补给点
-    void attack_point_2(); // 二号点位，看中心增益点和对方补给点
+    void attack_point_2(); // 二号点位，看中心增益点
   };
 } // namespace robot_decision
 

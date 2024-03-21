@@ -43,27 +43,17 @@ namespace sp_decision
 
     void AttackBehavior::attack_point_1() // TODO：补充云台方向控制
     {
-        if (num_1 == 0)
-        {
-            chassis_exe_ptr_->FastMove(blackboard_ptr_->attack_pos[1].x, blackboard_ptr_->attack_pos[1].y);
-            num_1++;
-        }
-        if (chassis_exe_ptr_->GetMoveStatus())
-        {
-            chassis_exe_ptr_->VelIdle();
-        }
+        chassis_exe_ptr_->FastMove(blackboard_ptr_->attack_pos[0].x, blackboard_ptr_->attack_pos[0].y);
     }
     void AttackBehavior::attack_point_2() // TODO：补充云台方向控制
     {
-        // if (num_2 == 0)
-        // {
-        //     chassis_exe_ptr_->FastMove(blackboard_ptr_->attack_pos[2].x, blackboard_ptr_->attack_pos[2].y);
-        //     num_2++;
-        // }
-        // if (chassis_exe_ptr_->GetMoveStatus())
-        // {
-        //     chassis_exe_ptr_->VelIdle();
-        // }
-         chassis_exe_ptr_->QueueMove(blackboard_ptr_->attack_queue_pos,blackboard_ptr_->action_status_, 3);
+        if (chassis_exe_ptr_->FastMove(blackboard_ptr_->attack_pos[1].x, blackboard_ptr_->attack_pos[1].y) ==2)
+        {
+            chassis_exe_ptr_->Stop();
+        }
+        else if (chassis_exe_ptr_->FastMove(blackboard_ptr_->attack_pos[1].x, blackboard_ptr_->attack_pos[1].y) == 1)
+        {
+            chassis_exe_ptr_->Stop();
+        }
     }
 }

@@ -18,7 +18,7 @@ robot_msg::RobotStateMsg state;
 void cmdVelCallback(const geometry_msgs::Twist::ConstPtr &msg)
 {
     current_cmd_vel = *msg;
-     current_cmd_vel.angular.z = 5;
+
     if (state.robot_state == RobotState::ROTATE)
     {
         current_cmd_vel.linear.x = 0.0;
@@ -31,12 +31,13 @@ void cmdVelCallback(const geometry_msgs::Twist::ConstPtr &msg)
         current_cmd_vel.linear.y = 0.0;
         current_cmd_vel.angular.z = 0;
     }
-     if (state.robot_state == RobotState::MOVE)
+    if (state.robot_state == RobotState::MOVE)
     {
-        current_cmd_vel.linear.x =msg->linear.x*0.5;
-        current_cmd_vel.linear.y = msg->linear.y*0.5;
+        current_cmd_vel.linear.x = msg->linear.x * 0.5;
+        current_cmd_vel.linear.y = msg->linear.y * 0.5;
         current_cmd_vel.angular.z = 5;
     }
+    current_cmd_vel.angular.z = 5;
     sentry_cmd_vel_pub.publish(current_cmd_vel);
 }
 

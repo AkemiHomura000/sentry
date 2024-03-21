@@ -90,7 +90,7 @@ Implementation ChassisExecutor::SendDataToPlan(double pos_x, double pos_y)
                 set_goal_pub_.publish(goal_);
                 double v_x=blackboard_->vel_msg_sub_.linear.x;
                 double v_y=blackboard_->vel_msg_sub_.linear.y;
-                ros::Duration(0.2).sleep(); // 等待0.1s？
+                ros::Duration(0.2).sleep(); // 等待0.2s,判断速度是否相等（获取点失败后可能不更新速度，也可能速度为0）
                 if (blackboard_->vel_msg_sub_.linear.x == v_x && blackboard_->vel_msg_sub_.linear.y ==v_y)
                 {
                     exec_stauts = Implementation::FAILED;
