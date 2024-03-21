@@ -34,6 +34,7 @@ namespace sp_decision
     std::mutex goal_status_mutex;
     std::mutex referee_info_mutex;
     std::mutex armor_mutex;
+    std::mutex enemy_hp_mutex;
     void ResetFlag();
 
     /**

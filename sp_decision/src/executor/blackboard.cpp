@@ -79,7 +79,7 @@ namespace sp_decision
         {
             game_status_ = MatchSatuts::AT_MATCH;
         }
-        if (stage_remain_time ==0)
+        if (stage_remain_time == 0)
         {
             game_status_ = MatchSatuts::AFTER_MATCH;
         }
@@ -154,6 +154,8 @@ namespace sp_decision
     }
     void Blackboard::EnemyCallback(const robot_msg::RobotHP::ConstPtr &msg)
     {
+        enemy_hp_mutex.lock();
         Sentry_HP_ = msg->Sentry_HP; // TODO:敌方烧饼血量
+        enemy_hp_mutex.unlock();
     }
 } // namespace sp_decision
