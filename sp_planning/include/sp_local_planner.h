@@ -242,7 +242,7 @@ namespace local_planner
             {
             case RobotState::MOVE:
             {
-                if (distance > 0.8)
+                if (distance > 0.5)
                 {
                     cmd_vel.angular.z = 0;
                     // 正常行驶速度
@@ -254,7 +254,7 @@ namespace local_planner
                 {
                     cmd_vel.angular.z = 0;
                     // 正常行驶速度
-                    v = 0.3 * max_v_;
+                    v = 0.6*max_v_;
                     // 遇到障碍减速
                     ratio = 0.8;
                 }

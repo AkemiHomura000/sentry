@@ -1,6 +1,6 @@
 image: /home/rm/sp_nav_ws/src/sp_nav/FAST_LIO/map/nav.pgm
 resolution: 0.050000
-origin: [-2.450000, -3.750000, 0.0]
+origin: [-2.550000, -4.200000, 0.0]
 negate: 0
 occupied_thresh: 0.65
 free_thresh: 0.196

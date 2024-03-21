@@ -53,7 +53,7 @@ Implementation ChassisExecutor::SendDataToPlan(double pos_x, double pos_y)
         target_pose_.pose.orientation.w = 1.0;
         goal_.target_pose = target_pose_;
         set_goal_pub_.publish(goal_);
-        ros::Duration(0.1).sleep(); // 等待0.1s？
+        ros::Duration(0.2).sleep(); // 等待0.1s？
         if (blackboard_->vel_msg_sub_.linear.x == 0 && blackboard_->vel_msg_sub_.linear.y == 0)
         {
             exec_stauts = Implementation::FAILED;
@@ -73,7 +73,7 @@ Implementation ChassisExecutor::SendDataToPlan(double pos_x, double pos_y)
         {
             // 计算位移变化量
             double delta_distance = sqrt(pow(blackboard_->robot_pose_.pose.pose.position.x - blackboard_->last_position.x, 2) + pow(blackboard_->robot_pose_.pose.pose.position.y - blackboard_->last_position.y, 2));
-            if (delta_distance > 0.1 || exec_stauts == Implementation::FAILED)
+            if (delta_distance > 0.01 || exec_stauts == Implementation::FAILED)
             {
                 blackboard_->last_position.x = blackboard_->robot_pose_.pose.pose.position.x;
                 blackboard_->last_position.y = blackboard_->robot_pose_.pose.pose.position.y;
@@ -88,8 +88,10 @@ Implementation ChassisExecutor::SendDataToPlan(double pos_x, double pos_y)
                 target_pose_.pose.orientation.w = 1.0;
                 goal_.target_pose = target_pose_;
                 set_goal_pub_.publish(goal_);
-                ros::Duration(0.1).sleep(); // 等待0.1s？
-                if (blackboard_->vel_msg_sub_.linear.x == 0 && blackboard_->vel_msg_sub_.linear.y == 0)
+                double v_x=blackboard_->vel_msg_sub_.linear.x;
+                double v_y=blackboard_->vel_msg_sub_.linear.y;
+                ros::Duration(0.2).sleep(); // 等待0.1s？
+                if (blackboard_->vel_msg_sub_.linear.x == v_x && blackboard_->vel_msg_sub_.linear.y ==v_y)
                 {
                     exec_stauts = Implementation::FAILED;
                     return Implementation::FAILED;
@@ -109,7 +111,7 @@ bool ChassisExecutor::GetMoveStatus()
 {
     double distance = sqrt(pow(blackboard_->robot_pose_.pose.pose.position.x - target_pose_.pose.position.x, 2) + pow(blackboard_->robot_pose_.pose.pose.position.y - target_pose_.pose.position.y, 2));
     ROS_INFO("distance %f", distance);
-    if (distance < 0.15)
+    if (distance < 0.20)
     {
         move_status = true;
         return 1;
@@ -124,7 +126,7 @@ Implementation ChassisExecutor::Move(double pos_x, double pos_y)
 {
     Implementation status;
     robotStatePub(RobotState::MOVE);
-    SendDataToPlan(pos_x, pos_y);
+    status=SendDataToPlan(pos_x, pos_y);
     ros::Duration(0.2).sleep();
     return status;
 }
@@ -229,7 +231,6 @@ Implementation ChassisExecutor::VelIdle()
 {
     Implementation status;
     robotStatePub(RobotState::ROTATE);
-    SendDataToPlan(0, 0);
     return status;
 }
 Implementation ChassisExecutor::VelStop()
@@ -239,7 +240,6 @@ Implementation ChassisExecutor::Stop()
 {
     Implementation status;
     robotStatePub(RobotState::STOP);
-    VelStop();
     return status;
 }
 Implementation ChassisExecutor::Idle()

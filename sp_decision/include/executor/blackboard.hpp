@@ -55,7 +55,7 @@ namespace sp_decision
     // std::vector<Point> attack_pos = {{1.7, 0}, {0.4, 1.6}, {1, -1.1}};
     // std::vector<Point> attack_queue_pos = {{1, -1.2}, {1.1, -1.2}};
 
-    std::vector<Point> buff_pos_ = {{-0.93, 0.22}, {-0.83, -0.1}};
+    std::vector<Point> buff_pos_ = {{-1,1}, {0 ,0}};
     //std::vector<Point> buff_queue_pos_ = {{-1.48, 1.77}, {-1.18, 1.77}, {-1.38, 1.67}, {-1.28, 1.87}};
     std::vector<Point> backward_defence_pos_ = {{0.5, 0.5}, {1.6, 0.7}};   // base周围点位
     std::vector<Point> backward_defence_queue_pos_ = {{1, -1}, {2, -1.5}}; // base周围点位

@@ -18,6 +18,7 @@ namespace sp_decision
                 {
                     ROS_INFO("add_blood");
                     Go2Buff();
+                   
                     log_exe_ptr_->info("behavior: add blood");
                     return BehaviorState::SUCCESS;
                 }
@@ -40,12 +41,17 @@ namespace sp_decision
             if (chassis_exe_ptr_->Move(blackboard_ptr_->buff_pos_[0].x,
                                        blackboard_ptr_->buff_pos_[0].y) != 2)
             {
+                chassis_exe_ptr_->VelIdle();
+                ros::Duration(1.5).sleep();
                 status = 1;
             }
             else
             {
+                chassis_exe_ptr_->VelIdle();
+                ros::Duration(1.5).sleep();
                 status = 2;
             }
+             ROS_INFO("status-------------%d",status);
             break;
         }
         case 1:
@@ -65,6 +71,7 @@ namespace sp_decision
             {
                 status = 2;
             }
+             ROS_INFO("status-------------%d",status);
             break;
         }
         case 2:
@@ -84,6 +91,7 @@ namespace sp_decision
             {
                 status = 2; // 无法到达重复发送
             }
+             ROS_INFO("status-------------%d",status);
             break;
         }
         case 3:
@@ -98,6 +106,12 @@ namespace sp_decision
             {
                 status = 3;
             }
+            else  if (chassis_exe_ptr_->Move(blackboard_ptr_->buff_pos_[0].x,
+                                       blackboard_ptr_->buff_pos_[0].y) == 2){
+                chassis_exe_ptr_->Stop();
+                status=1;
+            }
+             ROS_INFO("status-------------%d",status);
             break;
         }
         default:

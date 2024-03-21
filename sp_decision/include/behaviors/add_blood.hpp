@@ -19,7 +19,7 @@ namespace sp_decision
 
   private:
     void Go2Buff();
-    int status;//0表示初始化，1表示前往一号点，2表示前往二号点，3表示到达一号点，4表示到达二号点
+    int status=0;//0表示初始化，1表示前往一号点，2表示前往二号点，3表示到达一号点，4表示到达二号点
   };
 } // namespace robot_decision
 
