@@ -1,6 +1,8 @@
 #include "sentry_communicator/can_bus.hpp"
 #define MAX_SPEED 10.f
 #define MIN_SPEED -10.f
+#define MAX_ANGLE 180.f
+#define MIN_ANGLE -180.f
 
 namespace sentry_communicator
 {
@@ -14,35 +16,70 @@ namespace sentry_communicator
         while (!socket_can_.open(bus_name, boost::bind(&CanBus::frameCallback, this, _1), thread_priority) && ros::ok())
             ros::Duration(.5).sleep();
         ROS_INFO("[CAN_BUS] : Successfully connected to %s.", bus_name.c_str());
-        cmd_chassis_sub_ = root_nh.subscribe<geometry_msgs::Twist>("/sentry/cmd_vel", 1, &CanBus::cmdChassisCallback, this);
         
-        frame_.can_id = 0x111;
-        frame_.can_dlc = 8;
+        // subscribe cmd_vel
+        cmd_chassis_sub_ = root_nh.subscribe<geometry_msgs::Twist>("/sentry/cmd_vel", 1, &CanBus::cmdChassisCallback, this);
+        chassis_frame_.can_id = 0x111;
+        chassis_frame_.can_dlc = 8;
+
+        // subscribe gimble yaw limit
+        cmd_gimbal_sub_ = root_nh.subscribe<robot_msg::CmdGimbal>("/sentry/cmd_gimbal", 1, &CanBus::cmdGimbalCallback, this);
+        gimbal_frame_.can_id = 0x112;
+        gimbal_frame_.can_dlc = 8;
     }
 
     void CanBus::write()
     {
         // set all data_byte to 0
-        std::fill(std::begin(frame_.data), std::end(frame_.data), 0);
-        // Lithesh TODO : add speed_limit
-        const geometry_msgs::Twist &command_velocity = realtime_buffer_.readFromNonRT()->cmd_vel_;
+        std::fill(std::begin(chassis_frame_.data), std::end(chassis_frame_.data), 0);
+        
+        const geometry_msgs::Twist &command_velocity = chassis_buffer_.readFromNonRT()->cmd_vel_;
 
         uint16_t vel_x = float2uint(command_velocity.linear.x, MIN_SPEED, MAX_SPEED, 12);
         uint16_t vel_y = float2uint(command_velocity.linear.y, MIN_SPEED, MAX_SPEED, 12);
         uint16_t vel_z = float2uint(command_velocity.angular.z, MIN_SPEED, MAX_SPEED, 12);
-        frame_.data[0] = static_cast<uint8_t>(vel_x >> 4u);
-        frame_.data[1] = static_cast<uint8_t>((vel_x & 0xF) << 4u | vel_y >> 8u);
-        frame_.data[2] = static_cast<uint8_t>(vel_y);
-        frame_.data[3] = static_cast<uint8_t>(vel_z >> 4u);
-        frame_.data[4] = static_cast<uint8_t>((vel_z & 0xF) << 4u | 0xF);
+        chassis_frame_.data[0] = static_cast<uint8_t>(vel_x >> 4u);
+        chassis_frame_.data[1] = static_cast<uint8_t>((vel_x & 0xF) << 4u | vel_y >> 8u);
+        chassis_frame_.data[2] = static_cast<uint8_t>(vel_y);
+        chassis_frame_.data[3] = static_cast<uint8_t>(vel_z >> 4u);
+        chassis_frame_.data[4] = static_cast<uint8_t>((vel_z & 0xF) << 4u | 0xF);
 
-    	socket_can_.write(&frame_);
+    	socket_can_.write(&chassis_frame_);
+
+
+        // set all data_byte to 0
+        std::fill(std::begin(gimbal_frame_.data), std::end(gimbal_frame_.data), 0);
+        
+        const robot_msg::CmdGimbal &gimbal_command = gimbal_buffer_.readFromNonRT()->cmd_gimbal_;
+
+        uint16_t yaw_lower_limit = float2uint(gimbal_command.yaw_min, MIN_ANGLE, MAX_ANGLE, 16);
+        uint16_t yaw_upper_limit = float2uint(gimbal_command.yaw_max, MIN_ANGLE, MAX_ANGLE, 16);
+        uint16_t pitch_lower_limit = float2uint(gimbal_command.pitch_min, MIN_ANGLE, MAX_ANGLE, 16);
+        uint16_t pitch_upper_limit = float2uint(gimbal_command.pitch_max, MIN_ANGLE, MAX_ANGLE, 16);
+
+        gimbal_frame_.data[0] = static_cast<uint8_t>(yaw_lower_limit >> 8);
+        gimbal_frame_.data[1] = static_cast<uint8_t>(yaw_lower_limit);
+        gimbal_frame_.data[2] = static_cast<uint8_t>(yaw_upper_limit >> 8);
+        gimbal_frame_.data[3] = static_cast<uint8_t>(yaw_upper_limit);
+        gimbal_frame_.data[4] = static_cast<uint8_t>(pitch_lower_limit >> 8);
+        gimbal_frame_.data[5] = static_cast<uint8_t>(pitch_lower_limit);
+        gimbal_frame_.data[6] = static_cast<uint8_t>(pitch_upper_limit >> 8);
+        gimbal_frame_.data[7] = static_cast<uint8_t>(pitch_upper_limit);
+
+    	socket_can_.write(&gimbal_frame_);
+
     }
 
     void CanBus::cmdChassisCallback(const geometry_msgs::Twist::ConstPtr &msg)
     {
-        Command cmd_struct_temp{.cmd_vel_ = *msg, .stamp_ = ros::Time::now()};
-        realtime_buffer_.writeFromNonRT(cmd_struct_temp);
+        ChassisCommand cmd_struct_temp{.cmd_vel_ = *msg, .stamp_ = ros::Time::now()};
+        chassis_buffer_.writeFromNonRT(cmd_struct_temp);
+    }
+
+    void CanBus::cmdGimbalCallback(const robot_msg::CmdGimbal::ConstPtr &msg)
+    {
+        GimbalCommand cmd_struct_temp{.cmd_gimbal_ = *msg, .stamp_ = ros::Time::now()};
+        gimbal_buffer_.writeFromNonRT(cmd_struct_temp);
     }
 
     void CanBus::frameCallback(const can_frame &frame)
