@@ -11,12 +11,19 @@
 
 #include <robot_msg/RefereeInfoMsg.h>
 #include <robot_msg/RobotHP.h>
+#include <robot_msg/CmdGimbal.h>
 
 namespace sentry_communicator
 {
-    struct Command
+    struct ChassisCommand
     {
         geometry_msgs::Twist cmd_vel_;
+        ros::Time stamp_;
+    };
+
+    struct GimbalCommand
+    {
+        robot_msg::CmdGimbal cmd_gimbal_;
         ros::Time stamp_;
     };
 
@@ -39,15 +46,15 @@ namespace sentry_communicator
          */
         void frameCallback(const can_frame &frame);
         void cmdChassisCallback(const geometry_msgs::Twist::ConstPtr &msg);
+        void cmdGimbalCallback(const robot_msg::CmdGimbal::ConstPtr &msg);
 
         const std::string bus_name_;
         can::SocketCAN socket_can_;
         ros::Subscriber cmd_chassis_sub_;
+        ros::Subscriber cmd_gimbal_sub_;
         std::mutex mutex_;
 
-        geometry_msgs::Point lower_com_data;
-        tf::TransformBroadcaster tf_yaw2chassis;
-        
+
         ros::Publisher referee_info_pub_;
         robot_msg::RefereeInfoMsg 
             referee_info_msg_;
@@ -61,11 +68,13 @@ namespace sentry_communicator
         
 
         // Lithesh : use realtime buffer to keep the multi-thread safe.
-        realtime_tools::RealtimeBuffer<Command> realtime_buffer_;
-        Command cmd_struct_;
+        realtime_tools::RealtimeBuffer<ChassisCommand> chassis_buffer_;
+        realtime_tools::RealtimeBuffer<GimbalCommand> gimbal_buffer_;
+        
         // the int array used to contain data_frame, which has 8 byte
         uint8_t *can_data_;
-        can_frame frame_;
+        can_frame chassis_frame_;
+        can_frame gimbal_frame_;
         
         uint16_t data;
         
