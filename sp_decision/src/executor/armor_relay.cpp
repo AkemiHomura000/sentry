@@ -1,12 +1,19 @@
 #include "executor/armor_relay.hpp"
 #include "tools/math.hpp"
+std::string enemy_string;
+void EnemyCallback(const robot_msg::EnemyStage::ConstPtr &msg)
+{
+    enemy_string = msg->ss;
+}
 int main(int argc, char **argv)
 {
+    enemy_string = "0";
     ros::init(argc, argv, "armor_transformer");
     ros::NodeHandle nh;
     tf2_ros::Buffer tfBuffer;
     tf2_ros::TransformListener tfListener(tfBuffer);
     ros::Publisher armor_pub_ = nh.advertise<robot_msg::Armor>("/armor", 1);
+    ros::Subscriber enemy_sub_ = nh.subscribe("/enemy_stage", 1, &EnemyCallback);
     robot_msg::Armor armor_sentry;
     armor_sentry.number = 7;
     armor_sentry.type = "sentry";
@@ -62,8 +69,8 @@ int main(int argc, char **argv)
                         geometry_msgs::TransformStamped camera_init2map;
                         camera_init2map = tfBuffer.lookupTransform("map", "camera_init", ros::Time(0));
                         geometry_msgs::PoseStamped pose_2 = tools::trans(pose_1, camera_init2map);
-                        //tf2::doTransform(dst_pose, dst_pose, body2camera_init);
-                        // 输出转换后的姿态
+                        // tf2::doTransform(dst_pose, dst_pose, body2camera_init);
+                        //  输出转换后的姿态
                         armor_sentry.pose.position.x = pose_2.pose.position.x;
                         armor_sentry.pose.position.y = pose_2.pose.position.y;
                         armor_sentry.pose.position.z = pose_2.pose.position.z;
@@ -78,6 +85,9 @@ int main(int argc, char **argv)
                         ROS_WARN("Failed to transform pose: %s", ex.what());
                     }
                 }
+                // 处理回调函数
+                ros::spinOnce();
+                server.send(enemy_string);
             }
         }
     }

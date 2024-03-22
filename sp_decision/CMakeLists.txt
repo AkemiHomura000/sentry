@@ -71,3 +71,8 @@ add_executable(get_plan src/executor/move_base_test.cpp)
 target_link_libraries(get_plan 
   ${catkin_LIBRARIES}
 ) 
+
+add_executable(enemy src/test.cpp)
+target_link_libraries(enemy 
+  ${catkin_LIBRARIES}
+) 

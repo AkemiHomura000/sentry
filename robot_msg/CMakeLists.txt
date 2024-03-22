@@ -55,6 +55,7 @@ add_message_files(
    MatchMsg.msg
    RefereeInfoMsg.msg
    Armor.msg
+   EnemyStage.msg
 )
 
 ## Generate services in the 'srv' folder

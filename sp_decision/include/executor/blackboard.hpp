@@ -11,6 +11,7 @@
 
 #include <nav_msgs/Odometry.h>
 #include <robot_msg/MatchMsg.h>
+#include <robot_msg/EnemyStage.h>
 #include <robot_msg/RefereeInfoMsg.h>
 #include <robot_msg/Armor.h>
 #include <ros/ros.h>
@@ -46,24 +47,24 @@ namespace sp_decision
       double y;
     };
 
-    //远离门口一侧
-    // std::vector<Point> buff_pos_ = {{-1.38, 1.77},{-1.38,1.57}};
-    // std::vector<Point> buff_queue_pos_ = {{-1.48, 1.77},{-1.18, 1.77},{-1.38, 1.67},{-1.28, 1.87}};
-    // std::vector<Point> backward_defence_pos_ = {{0.5, 0.5}, {1.6, 0.7}};   // base周围点位
-    // std::vector<Point> backward_defence_queue_pos_ = {{1, -1}, {2, -1.5}}; // base周围点位
-    // std::vector<Point> random_mode_pos = {{0.0, 0.0}, {0.5, 0.0}};
-    // std::vector<Point> patrol_pos = {{0.0, 0.0}, {-0.8, 0.0}, {0.0, -0.8}};
-    // std::vector<Point> attack_pos = {{1.7, 0}, {0.4, 1.6}, {1, -1.1}};
-    // std::vector<Point> attack_queue_pos = {{1, -1.2}, {1.1, -1.2}};
+    // 远离门口一侧
+    //  std::vector<Point> buff_pos_ = {{-1.38, 1.77},{-1.38,1.57}};
+    //  std::vector<Point> buff_queue_pos_ = {{-1.48, 1.77},{-1.18, 1.77},{-1.38, 1.67},{-1.28, 1.87}};
+    //  std::vector<Point> backward_defence_pos_ = {{0.5, 0.5}, {1.6, 0.7}};   // base周围点位
+    //  std::vector<Point> backward_defence_queue_pos_ = {{1, -1}, {2, -1.5}}; // base周围点位
+    //  std::vector<Point> random_mode_pos = {{0.0, 0.0}, {0.5, 0.0}};
+    //  std::vector<Point> patrol_pos = {{0.0, 0.0}, {-0.8, 0.0}, {0.0, -0.8}};
+    //  std::vector<Point> attack_pos = {{1.7, 0}, {0.4, 1.6}, {1, -1.1}};
+    //  std::vector<Point> attack_queue_pos = {{1, -1.2}, {1.1, -1.2}};
 
-    std::vector<Point> buff_pos_ = {{-1,1}, {0 ,0}};
-    //std::vector<Point> buff_queue_pos_ = {{-1.48, 1.77}, {-1.18, 1.77}, {-1.38, 1.67}, {-1.28, 1.87}};
+    std::vector<Point> buff_pos_ = {{-1, 1}, {0, 0}};
+    // std::vector<Point> buff_queue_pos_ = {{-1.48, 1.77}, {-1.18, 1.77}, {-1.38, 1.67}, {-1.28, 1.87}};
     std::vector<Point> backward_defence_pos_ = {{0.5, 0.5}, {1.6, 0.7}};   // base周围点位
     std::vector<Point> backward_defence_queue_pos_ = {{1, -1}, {2, -1.5}}; // base周围点位
-    std::vector<Point> random_mode_pos = {{0.0, 0.0}, {1,-0.2}};
+    std::vector<Point> random_mode_pos = {{0.0, 0.0}, {1, -0.2}};
     std::vector<Point> patrol_pos = {{0.0, 0.0}, {-0.8, 0.0}, {0.0, -0.8}};
     std::vector<Point> attack_pos = {{1.7, 0}, {0.6, 1.1}, {1, -1.1}};
-    std::vector<Point> attack_queue_pos = {{1.4,-1.8}, {1.3,-1.7}};
+    std::vector<Point> attack_queue_pos = {{1.4, -1.8}, {1.3, -1.7}};
     int min_hp_;
     int min_bullet_;
     int min_outpost_;
@@ -83,7 +84,13 @@ namespace sp_decision
     ros::Time time_received_armor_;
     robot_msg::Armor armor_;
     nav_msgs::Odometry robot_pose_;
-
+    /**
+     * @brief 对方血量,联盟赛使用
+     */
+    int enemy_hp_[4];                         // 依次是基地，哨兵，单位一，单位二
+    int enemy_stage_[4];                      // 机器人状态，0--死亡，1--复活无敌状态，2--正常存活
+    int enemy_number[2];                      // 英雄为1，步兵3，4，5
+    std::vector<ros::Time> enemy_revive_time; // 用于复活时间倒计时
     /**
      * @brief
      */
@@ -95,7 +102,7 @@ namespace sp_decision
      */
     geometry_msgs::Twist vel_msg_sub_;
 
-    // 比赛状态?
+    // 比赛状态
     enum class MatchSatuts
     {
       TO_BEGIN,
@@ -104,7 +111,7 @@ namespace sp_decision
     };
     MatchSatuts game_status_;
 
-    // 动作状态?
+    // 动作状态
     enum class Action_Lock
     {
       ADD_BLOOD,
@@ -127,10 +134,10 @@ namespace sp_decision
     int current_hp;
     bool status_init = 0; // 状态初始化
     ros::Time time_1;
-    bool sentry_attacked_ = 0;    // 烧饼受击状态
-    bool attacked_violently_ = 0; // 掉血速度过快
-    bool armor_received_ = 0;     // 装甲板接收状态
-    geometry_msgs::Point last_position;//记录位置
+    bool sentry_attacked_ = 0;          // 烧饼受击状态
+    bool attacked_violently_ = 0;       // 掉血速度过快
+    bool armor_received_ = 0;           // 装甲板接收状态
+    geometry_msgs::Point last_position; // 记录位置
   private:
     ros::NodeHandle nh_;
     ros::Subscriber match_status_sub_;
@@ -142,6 +149,7 @@ namespace sp_decision
     ros::Subscriber referee_info_sub_;
     ros::Subscriber armor_sub_;
     ros::Subscriber enemy_hp_sub_;
+    ros::Publisher enemy_pub_;
     bool robot_odom_received_;
     bool match_state_received_;
     bool goal_status_received_;

@@ -16,10 +16,17 @@ namespace sp_decision
         goal_status_sub_ = nh_.subscribe("move_base/status", 10, &Blackboard::GoalStatusCallback, this);
         armor_sub_ = nh_.subscribe("/armor", 10, &Blackboard::ArmorCallback, this);
         enemy_hp_sub_ = nh_.subscribe("Enemy_robot_HP", 10, &Blackboard::EnemyCallback, this);
+        enemy_pub_ =
+            nh_.advertise<robot_msg::EnemyStage>("/enemy_stage", 1);
         nh_.param("min_hp", min_hp_, 200);
         nh_.param("min_bullet", min_bullet_, 100);
         nh_.param("min_outpost", min_outpost_, 300);
         nh_.param("distance_tolerance", distance_tolerance_, float(0.2));
+        for (int i = 0; i < 3; i++)
+        {
+            ros::Time time;
+            enemy_revive_time.push_back(time);
+        }
     }
 
     void Blackboard::ResetFlag()
@@ -156,6 +163,117 @@ namespace sp_decision
     {
         enemy_hp_mutex.lock();
         Sentry_HP_ = msg->Sentry_HP; // TODO:敌方烧饼血量
+        if (stage_remain_time > 298) // 检查对方阵容
+        {
+            if (msg->Hero_HP > 0)
+            {
+                enemy_number[0] = 1;
+                if (msg->Infantry_3_HP > 0)
+                {
+                    enemy_number[1] = 3;
+                }
+                if (msg->Infantry_4_HP > 0)
+                {
+                    enemy_number[1] = 4;
+                }
+                if (msg->Infantry_5_HP > 0)
+                {
+                    enemy_number[1] = 5;
+                }
+            }
+            else
+            {
+                if (msg->Infantry_3_HP == 0)
+                {
+                    enemy_number[0] = 4;
+                    enemy_number[1] = 5;
+                }
+                if (msg->Infantry_4_HP == 0)
+                {
+                    enemy_number[0] = 3;
+                    enemy_number[1] = 5;
+                }
+                if (msg->Infantry_5_HP == 0)
+                {
+                    enemy_number[0] = 3;
+                    enemy_number[1] = 4;
+                }
+            }
+            for (int i = 0; i < 4; i++)
+            {
+                enemy_stage_[i] = 2;
+            }
+        }
+        else
+        {
+            enemy_hp_[0] = msg->Base_HP;
+            enemy_hp_[1] = msg->Sentry_HP;
+            switch (enemy_number[0])
+            {
+            case 1:
+                enemy_hp_[2] = msg->Hero_HP;
+                break;
+            case 3:
+                enemy_hp_[2] = msg->Infantry_3_HP;
+                break;
+            case 4:
+                enemy_hp_[2] = msg->Infantry_4_HP;
+                break;
+            default:
+            {
+            }
+            }
+            switch (enemy_number[1])
+            {
+            case 3:
+                enemy_hp_[3] = msg->Infantry_3_HP;
+                break;
+            case 4:
+                enemy_hp_[3] = msg->Infantry_4_HP;
+                break;
+            case 5:
+                enemy_hp_[3] = msg->Infantry_5_HP;
+                break;
+            default:
+            {
+            }
+            }
+            for (int n = 1; n < 4; n++)
+            {
+                if (enemy_hp_[n] > 0 && enemy_stage_[n] == 0) // 更新为刚复活
+                {
+                    enemy_stage_[n] = 1;
+                    enemy_revive_time[n - 1] = ros::Time::now();
+                    // TODO 发送tcp
+                }
+                else if (enemy_hp_[n] > 0 && enemy_stage_[n] == 1) // 刚复活
+                {
+                    if ((ros::Time::now().sec - enemy_revive_time[n - 1].sec) > 10)
+                    {
+                        enemy_stage_[n] = 2;
+                    }
+                }
+                else if (enemy_hp_[n] == 0 && enemy_stage_[n] == 2)
+                {
+                    enemy_stage_[n] = 0;
+                }
+            }
+
+            std::stringstream ss;
+            ss << "0";
+            if (enemy_stage_[2] == 1)
+            {
+                ss << "," << enemy_number[0];
+            }
+            if (enemy_stage_[3] == 1)
+            {
+                ss << "," << enemy_number[1];
+            }
+            robot_msg::EnemyStage enemy__;
+            std::string binary_string = ss.str();
+            enemy__.ss = binary_string;
+            enemy_pub_.publish(enemy__);
+        }
         enemy_hp_mutex.unlock();
     }
 } // namespace sp_decision
