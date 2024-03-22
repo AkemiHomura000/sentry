@@ -133,6 +133,10 @@ namespace sentry_communicator
             referee_info_msg_.robot_HP = (uint16_t)((frame.data[2] << 8u) | frame.data[3]);
             referee_info_msg_.game_progress = frame.data[4];
             referee_info_msg_.stage_remain_time = (uint16_t)((frame.data[5] << 8u) | frame.data[6]);
+            // front 4 bits
+            referee_info_msg_.rfid_remedy_state = (uint16_t)((frame.data[7] & 0xF0u) >> 4u);
+            // later 4 bits
+            referee_info_msg_.rfid_centerpoint_state = (uint16_t)(frame.data[7] & 0x0Fu);
 
             referee_info_pub_.publish(referee_info_msg_);
 
