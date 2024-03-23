@@ -31,17 +31,22 @@ namespace sp_decision
             }
             else if (blackboard_ptr_->attack == 1 || blackboard_ptr_->stage_remain_time < 120) // 冲家
             {
+                ROS_INFO("attack  %d",blackboard_ptr_->attack);
                 switch (num_3)
                 {
                 case 0:
                 {
                     attack_point_3();
                     num_3 = 1;
+                    blackboard_ptr_->action_status_ = Blackboard::Action_Lock::ATTACK;
+                    return BehaviorState::SUCCESS;
                     break;
                 }
                 case 1:
                 {
                     attack_point_3();
+                    blackboard_ptr_->action_status_ = Blackboard::Action_Lock::ATTACK;
+                    return BehaviorState::SUCCESS;
                     break;
                 }
                 case 2:
@@ -54,12 +59,16 @@ namespace sp_decision
                             num_3 = 3;
                         }
                     }
+                    blackboard_ptr_->action_status_ = Blackboard::Action_Lock::ATTACK;
+                    return BehaviorState::SUCCESS;
                     break;
                 }
                 case 3:
                 {
                     chassis_exe_ptr_->observe(0, 180);
                     attack_point_4();
+                    blackboard_ptr_->action_status_ = Blackboard::Action_Lock::ATTACK;
+                    return BehaviorState::SUCCESS;
                     break;
                 }
                 case 4:
@@ -72,12 +81,16 @@ namespace sp_decision
                             num_3 = 5;
                         }
                     }
+                    blackboard_ptr_->action_status_ = Blackboard::Action_Lock::ATTACK;
+                    return BehaviorState::SUCCESS;
                     break;
                 }
                 case 5:
                 {
                     chassis_exe_ptr_->observe(-180, 180);
                     attack_point_5();
+                    blackboard_ptr_->action_status_ = Blackboard::Action_Lock::ATTACK;
+                    return BehaviorState::SUCCESS;
                     break;
                 }
                 case 6:
@@ -90,6 +103,12 @@ namespace sp_decision
                     {
                         chassis_exe_ptr_->observe(-180, 180);
                     }
+                    blackboard_ptr_->action_status_ = Blackboard::Action_Lock::ATTACK;
+                    return BehaviorState::SUCCESS;
+                    break;
+                }
+                default:
+                {
                 }
                 }
             }
