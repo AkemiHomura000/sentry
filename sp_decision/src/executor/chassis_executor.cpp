@@ -10,6 +10,7 @@ ChassisExecutor::ChassisExecutor(const sp_decision::Blackboard::Ptr &blackboard_
         nh_.advertise<robot_msg::RobotStateMsg>("/robot_state", 1);
     sentry_cmdvel_pub_ =
         nh_.advertise<geometry_msgs::Twist>("/cmd_vel", 1);
+    gimbal_pub_ = nh_.advertise<robot_msg::CmdGimbal>("/sentry/cmd_gimbal", 1);
     target_pose_.pose.position.x = 100000;
     target_pose_.pose.position.y = 100000; // 确保初值不会和第一个点冲突
 }
@@ -88,10 +89,10 @@ Implementation ChassisExecutor::SendDataToPlan(double pos_x, double pos_y)
                 target_pose_.pose.orientation.w = 1.0;
                 goal_.target_pose = target_pose_;
                 set_goal_pub_.publish(goal_);
-                double v_x=blackboard_->vel_msg_sub_.linear.x;
-                double v_y=blackboard_->vel_msg_sub_.linear.y;
+                double v_x = blackboard_->vel_msg_sub_.linear.x;
+                double v_y = blackboard_->vel_msg_sub_.linear.y;
                 ros::Duration(0.2).sleep(); // 等待0.2s,判断速度是否相等（获取点失败后可能不更新速度，也可能速度为0）
-                if (blackboard_->vel_msg_sub_.linear.x == v_x && blackboard_->vel_msg_sub_.linear.y ==v_y)
+                if (blackboard_->vel_msg_sub_.linear.x == v_x && blackboard_->vel_msg_sub_.linear.y == v_y)
                 {
                     exec_stauts = Implementation::FAILED;
                     return Implementation::FAILED;
@@ -126,7 +127,7 @@ Implementation ChassisExecutor::Move(double pos_x, double pos_y)
 {
     Implementation status;
     robotStatePub(RobotState::MOVE);
-    status=SendDataToPlan(pos_x, pos_y);
+    status = SendDataToPlan(pos_x, pos_y);
     ros::Duration(0.2).sleep();
     return status;
 }
@@ -248,4 +249,19 @@ Implementation ChassisExecutor::Idle()
     robotStatePub(RobotState::IDLE);
     VelIdle();
     return status;
+}
+/**
+ *@brief 控制云台角度,角度以上电时为0，逆时针为正，-180到180
+ */
+void ChassisExecutor::observe(double min_angle, double max_angle)
+{
+    gimbal_mutex.lock();
+    robot_msg::CmdGimbal gimbal;
+    gimbal.yaw_min = min_angle;
+    gimbal.yaw_max = max_angle;
+    gimbal.pitch_max = 0;
+    gimbal.pitch_min = 0;
+    gimbal_pub_.publish(gimbal);
+    control_gimbal = 1;
+    gimbal_mutex.unlock();
 }

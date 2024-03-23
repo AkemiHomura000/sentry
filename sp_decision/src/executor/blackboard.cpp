@@ -258,7 +258,13 @@ namespace sp_decision
                     enemy_stage_[n] = 0;
                 }
             }
-
+            for (int n = 1; n < 4; n++)
+            {
+                if (enemy_stage_[n] == 0) // 更新为刚复活
+                {
+                    attack = 1;
+                }
+            }
             std::stringstream ss;
             ss << "0";
             if (enemy_stage_[2] == 1)
