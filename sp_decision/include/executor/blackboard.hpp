@@ -124,8 +124,8 @@ namespace sp_decision
     };
     Action_Lock action_status_ = Action_Lock::JUDGING;
 
-    /*
-     *@brife 决策所需变量
+    /**
+     *@brief 决策所需变量
      */
     int available_hp_ = 600; // 剩余可加血量?
     bool plan_get_ = 0;      // 是否规划出路径规划出路径
@@ -138,6 +138,7 @@ namespace sp_decision
     bool attacked_violently_ = 0;       // 掉血速度过快
     bool armor_received_ = 0;           // 装甲板接收状态
     geometry_msgs::Point last_position; // 记录位置
+    bool attack = 0;                    // 对方死一人后更新为1
   private:
     ros::NodeHandle nh_;
     ros::Subscriber match_status_sub_;

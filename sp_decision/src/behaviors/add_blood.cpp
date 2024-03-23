@@ -4,6 +4,11 @@ namespace sp_decision
 {
     BehaviorState AddBloodBehavior::Update()
     {
+        if (chassis_exe_ptr_->control_gimbal == 0) // 上一次循环未调用则恢复扫描模式
+        {
+            chassis_exe_ptr_->observe(0, 0);
+        }
+        chassis_exe_ptr_->control_gimbal = 0;
         ROS_INFO("hp: %d  ,time :%d ,available :%d", blackboard_ptr_->robot_hp_, blackboard_ptr_->stage_remain_time, blackboard_ptr_->available_hp_);
         if (blackboard_ptr_->action_status_ >= Blackboard::Action_Lock::ADD_BLOOD)
         {
@@ -18,7 +23,7 @@ namespace sp_decision
                 {
                     ROS_INFO("add_blood");
                     Go2Buff();
-                   
+
                     log_exe_ptr_->info("behavior: add blood");
                     return BehaviorState::SUCCESS;
                 }
@@ -51,7 +56,7 @@ namespace sp_decision
                 ros::Duration(1.5).sleep();
                 status = 2;
             }
-             ROS_INFO("status-------------%d",status);
+            ROS_INFO("status-------------%d", status);
             break;
         }
         case 1:
@@ -67,11 +72,11 @@ namespace sp_decision
                 status = 3;
             }
             else if (chassis_exe_ptr_->Move(blackboard_ptr_->buff_pos_[0].x,
-                                           blackboard_ptr_->buff_pos_[0].y) == 2)
+                                            blackboard_ptr_->buff_pos_[0].y) == 2)
             {
                 status = 2;
             }
-             ROS_INFO("status-------------%d",status);
+            ROS_INFO("status-------------%d", status);
             break;
         }
         case 2:
@@ -87,11 +92,11 @@ namespace sp_decision
                 status = 4;
             }
             else if (chassis_exe_ptr_->Move(blackboard_ptr_->buff_pos_[1].x,
-                                           blackboard_ptr_->buff_pos_[1].y) == 2)
+                                            blackboard_ptr_->buff_pos_[1].y) == 2)
             {
                 status = 2; // 无法到达重复发送
             }
-             ROS_INFO("status-------------%d",status);
+            ROS_INFO("status-------------%d", status);
             break;
         }
         case 3:
@@ -106,12 +111,13 @@ namespace sp_decision
             {
                 status = 3;
             }
-            else  if (chassis_exe_ptr_->Move(blackboard_ptr_->buff_pos_[0].x,
-                                       blackboard_ptr_->buff_pos_[0].y) == 2){
+            else if (chassis_exe_ptr_->Move(blackboard_ptr_->buff_pos_[0].x,
+                                            blackboard_ptr_->buff_pos_[0].y) == 2)
+            {
                 chassis_exe_ptr_->Stop();
-                status=1;
+                status = 1;
             }
-             ROS_INFO("status-------------%d",status);
+            ROS_INFO("status-------------%d", status);
             break;
         }
         default:

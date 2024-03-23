@@ -18,6 +18,7 @@
 #include <executor/blackboard.hpp>
 #include <cmath>
 #include "executor/blackboard.hpp"
+#include "robot_msg/CmdGimbal.h" // 导入自定义消息类型
 
 // 给MoveBaseAction定义一个别名，方便创建对象
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> Client;
@@ -30,6 +31,7 @@ enum Implementation
 class ChassisExecutor
 {
 public:
+    std::mutex gimbal_mutex;
   enum RobotState
   {
     MOVE,
@@ -55,19 +57,21 @@ public:
   Implementation Idle();
   Implementation Pursuit(double pos_x, double pos_y);
   Implementation SendDataToPlan(double pos_x, double pos_y);
+  void observe(double min_angle, double max_angle);
   bool GetMoveStatus();
   bool move_status = 0;                                                                               // 移动完成
   int num = -1;                                                                                       // 目标点序号
   sp_decision::Blackboard::Action_Lock action_status = sp_decision::Blackboard::Action_Lock::JUDGING; // 记录调用QueueMove()的动作来源
   geometry_msgs::Twist sentry_cmdvel_;
   Implementation exec_stauts;
-
+  bool control_gimbal=0;//是否需要控制云台
 private:
   sp_decision::Blackboard::Ptr blackboard_;
   ros::NodeHandle nh_;
   ros::Publisher set_goal_pub_;
   ros::Publisher robot_state_pub_;
   ros::Publisher sentry_cmdvel_pub_;
+  ros::Publisher gimbal_pub_;
   geometry_msgs::PoseStamped target_pose_;
   move_base_msgs::MoveBaseGoal goal_;
   double max_vel_theta_;
