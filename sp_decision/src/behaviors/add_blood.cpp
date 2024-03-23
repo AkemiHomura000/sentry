@@ -12,7 +12,9 @@ namespace sp_decision
         ROS_INFO("hp: %d  ,time :%d ,available :%d", blackboard_ptr_->robot_hp_, blackboard_ptr_->stage_remain_time, blackboard_ptr_->available_hp_);
         if (blackboard_ptr_->action_status_ >= Blackboard::Action_Lock::ADD_BLOOD)
         {
-            if (blackboard_ptr_->action_status_ == Blackboard::Action_Lock::ADD_BLOOD || (blackboard_ptr_->robot_hp_ < 120 && blackboard_ptr_->stage_remain_time > 60) || blackboard_ptr_->test_id == 1)
+            if (blackboard_ptr_->action_status_ == Blackboard::Action_Lock::ADD_BLOOD ||
+                (blackboard_ptr_->robot_hp_ < 120 && blackboard_ptr_->stage_remain_time > 60) ||
+                (blackboard_ptr_->robot_hp_ < 600 && blackboard_ptr_->stage_remain_time < 90) || blackboard_ptr_->test_id == 1)//补血条件：1.低于120血且时间>60;2.低于600血，且时间<90
             {
                 if (blackboard_ptr_->action_status_ != Blackboard::Action_Lock::ADD_BLOOD) // 从其他状态进入会初始化
                 {

@@ -278,6 +278,7 @@ namespace sp_decision
             robot_msg::EnemyStage enemy__;
             std::string binary_string = ss.str();
             enemy__.ss = binary_string;
+             ROS_INFO("attack---------------------------------------  %d",attack);
             enemy_pub_.publish(enemy__);
         }
         enemy_hp_mutex.unlock();
