@@ -19,7 +19,9 @@ namespace sp_decision
 
   private:
     void Go2Buff();
-    int status=0;//0表示初始化，1表示前往一号点，2表示前往二号点，3表示到达一号点，4表示到达二号点
+    int status = 0; // 0表示初始化，1表示前往一号点，2表示前往二号点，3表示到达一号点，4表示到达二号点
+    int count = 0;  // 加血次数限制，只加一次血,0为未开始加血，1为8秒内，2为完成
+    ros::Time last_time;
   };
 } // namespace robot_decision
 

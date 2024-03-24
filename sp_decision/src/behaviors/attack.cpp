@@ -21,104 +21,20 @@ namespace sp_decision
                 blackboard_ptr_->action_status_ = Blackboard::Action_Lock::ATTACK;
                 return BehaviorState::SUCCESS;
             }
-            else if (blackboard_ptr_->stage_remain_time > 270 && blackboard_ptr_->armor_.track_status == 1) // 假设在前30秒自瞄锁定到对方烧饼
-            {
-                ROS_INFO("attack_1");
-                attack_point_1();
-                log_exe_ptr_->info("behavior: attack");
-                blackboard_ptr_->action_status_ = Blackboard::Action_Lock::ATTACK;
-                return BehaviorState::SUCCESS;
-            }
-            else if (blackboard_ptr_->attack == 1 || blackboard_ptr_->stage_remain_time < 120) // 冲家
-            {
-                ROS_INFO("attack  %d",blackboard_ptr_->attack);
-                switch (num_3)
-                {
-                case 0:
-                {
-                    attack_point_3();
-                    num_3 = 1;
-                    blackboard_ptr_->action_status_ = Blackboard::Action_Lock::ATTACK;
-                    return BehaviorState::SUCCESS;
-                    break;
-                }
-                case 1:
-                {
-                    attack_point_3();
-                    blackboard_ptr_->action_status_ = Blackboard::Action_Lock::ATTACK;
-                    return BehaviorState::SUCCESS;
-                    break;
-                }
-                case 2:
-                {
-                    chassis_exe_ptr_->observe(-30, 90);
-                    if ((ros::Time::now().sec - last_time.sec) > 4) // 观察四秒
-                    {
-                        if (blackboard_ptr_->armor_.track_status != 1)
-                        {
-                            num_3 = 3;
-                        }
-                    }
-                    blackboard_ptr_->action_status_ = Blackboard::Action_Lock::ATTACK;
-                    return BehaviorState::SUCCESS;
-                    break;
-                }
-                case 3:
-                {
-                    chassis_exe_ptr_->observe(0, 180);
-                    attack_point_4();
-                    blackboard_ptr_->action_status_ = Blackboard::Action_Lock::ATTACK;
-                    return BehaviorState::SUCCESS;
-                    break;
-                }
-                case 4:
-                {
-                    chassis_exe_ptr_->observe(0, 150);
-                    if ((ros::Time::now().sec - last_time.sec) > 4) // 观察四秒
-                    {
-                        if (blackboard_ptr_->armor_.track_status != 1)
-                        {
-                            num_3 = 5;
-                        }
-                    }
-                    blackboard_ptr_->action_status_ = Blackboard::Action_Lock::ATTACK;
-                    return BehaviorState::SUCCESS;
-                    break;
-                }
-                case 5:
-                {
-                    chassis_exe_ptr_->observe(-180, 180);
-                    attack_point_5();
-                    blackboard_ptr_->action_status_ = Blackboard::Action_Lock::ATTACK;
-                    return BehaviorState::SUCCESS;
-                    break;
-                }
-                case 6:
-                {
-                    if (blackboard_ptr_->enemy_stage_[1] != 2 && blackboard_ptr_->enemy_stage_[2] != 2 && blackboard_ptr_->enemy_stage_[3] != 2) // 对方全死后推塔
-                    {
-                        chassis_exe_ptr_->observe(30, 90);
-                    }
-                    else
-                    {
-                        chassis_exe_ptr_->observe(-180, 180);
-                    }
-                    blackboard_ptr_->action_status_ = Blackboard::Action_Lock::ATTACK;
-                    return BehaviorState::SUCCESS;
-                    break;
-                }
-                default:
-                {
-                }
-                }
-            }
-            else // 占中
+            else if (blackboard_ptr_->stage_remain_time < 290 && blackboard_ptr_->enemy_number[0] == 1) // 假设对方有英雄则前往二号点
             {
                 ROS_INFO("attack_2");
                 attack_point_2();
                 log_exe_ptr_->info("behavior: attack");
                 blackboard_ptr_->action_status_ = Blackboard::Action_Lock::ATTACK;
-                ROS_INFO("status    %d", blackboard_ptr_->action_status_);
+                return BehaviorState::SUCCESS;
+            }
+            else
+            {
+                ROS_INFO("attack_1");
+                attack_point_1();
+                log_exe_ptr_->info("behavior: attack");
+                blackboard_ptr_->action_status_ = Blackboard::Action_Lock::ATTACK;
                 return BehaviorState::SUCCESS;
             }
         }
@@ -127,11 +43,13 @@ namespace sp_decision
 
     void AttackBehavior::attack_point_1() // TODO：补充云台方向控制——————————守补给点
     {
-        chassis_exe_ptr_->FastMove(blackboard_ptr_->attack_pos[0].x, blackboard_ptr_->attack_pos[0].y);
+        if (chassis_exe_ptr_->FastMove(blackboard_ptr_->attack_pos[0].x, blackboard_ptr_->attack_pos[0].y) == 1)
+        {
+            chassis_exe_ptr_->observe(-80, 0);
+        }
     }
-    void AttackBehavior::attack_point_2() // TODO：补充云台方向控制———————————占中心
+    void AttackBehavior::attack_point_2() // TODO：补充云台方向控制———————————占据启动区
     {
-        ROS_INFO("attack_center");
         if (chassis_exe_ptr_->FastMove(blackboard_ptr_->attack_pos[1].x, blackboard_ptr_->attack_pos[1].y) == 2)
         {
             chassis_exe_ptr_->Stop();
@@ -139,8 +57,9 @@ namespace sp_decision
         else if (chassis_exe_ptr_->FastMove(blackboard_ptr_->attack_pos[1].x, blackboard_ptr_->attack_pos[1].y) == 1)
         {
             chassis_exe_ptr_->Stop();
+            chassis_exe_ptr_->observe(-80, 90);
         }
-    }
+        }
     void AttackBehavior::attack_point_3() // TODO：补充云台方向控制———————————冲对面家,点1
     {
         ROS_INFO("attack_3");
