@@ -13,24 +13,42 @@ namespace sp_decision
                 num_2 = 0;
                 num_3 = 0;
             }
-            if (blackboard_ptr_->stage_remain_time > 290) // 假设需要十秒买弹
+            if (blackboard_ptr_->base_attacked_ == 1) // 基地受到攻击到启动区
             {
+                std::stringstream str;
+                str << "behavior: backward_defence";
+                blackboard_ptr_->LogPub(str.str());
+                ROS_INFO("backward_defence");
+                attack_point_3();
+                blackboard_ptr_->action_status_ = Blackboard::Action_Lock::ATTACK;
+                return BehaviorState::SUCCESS;
+            }
+            else if (blackboard_ptr_->stage_remain_time > 290) // 假设需要十秒买弹
+            {
+                std::stringstream str;
+                str << "behavior: attack_1";
+                blackboard_ptr_->LogPub(str.str());
                 ROS_INFO("attack_1");
                 attack_point_1();
-                log_exe_ptr_->info("behavior: attack");
                 blackboard_ptr_->action_status_ = Blackboard::Action_Lock::ATTACK;
                 return BehaviorState::SUCCESS;
             }
             else if (blackboard_ptr_->stage_remain_time < 290 && blackboard_ptr_->enemy_number[0] == 1) // 假设对方有英雄则前往二号点
             {
+                std::stringstream str;
+                str << "behavior: attack_2";
+                blackboard_ptr_->LogPub(str.str());
                 ROS_INFO("attack_2");
                 attack_point_2();
-                log_exe_ptr_->info("behavior: attack");
                 blackboard_ptr_->action_status_ = Blackboard::Action_Lock::ATTACK;
                 return BehaviorState::SUCCESS;
             }
             else
             {
+                std::stringstream str;
+                str << "behavior: attack_1";
+                blackboard_ptr_->LogPub(str.str());
+                ROS_INFO("attack_1");
                 ROS_INFO("attack_1");
                 attack_point_1();
                 log_exe_ptr_->info("behavior: attack");
@@ -45,7 +63,7 @@ namespace sp_decision
     {
         if (chassis_exe_ptr_->FastMove(blackboard_ptr_->attack_pos[0].x, blackboard_ptr_->attack_pos[0].y) == 1)
         {
-            chassis_exe_ptr_->observe(-80, 0);
+            chassis_exe_ptr_->observe(-100, 0);
         }
     }
     void AttackBehavior::attack_point_2() // TODO：补充云台方向控制———————————占据启动区
@@ -59,19 +77,18 @@ namespace sp_decision
             chassis_exe_ptr_->Stop();
             chassis_exe_ptr_->observe(-80, 90);
         }
-        }
+    }
     void AttackBehavior::attack_point_3() // TODO：补充云台方向控制———————————冲对面家,点1
     {
-        ROS_INFO("attack_3");
-        if (chassis_exe_ptr_->FastMove(blackboard_ptr_->attack_pos[2].x, blackboard_ptr_->attack_pos[2].y) == 2)
+        ROS_INFO("backward_defence");
+        if (chassis_exe_ptr_->FastMove(blackboard_ptr_->attack_pos[1].x, blackboard_ptr_->attack_pos[1].y) == 2)
         {
             chassis_exe_ptr_->Stop();
         }
-        else if (chassis_exe_ptr_->FastMove(blackboard_ptr_->attack_pos[2].x, blackboard_ptr_->attack_pos[2].y) == 1)
+        else if (chassis_exe_ptr_->FastMove(blackboard_ptr_->attack_pos[1].x, blackboard_ptr_->attack_pos[1].y) == 1)
         {
             chassis_exe_ptr_->Stop();
-            num_3 = 2; // 到达1点
-            last_time = ros::Time::now();
+            chassis_exe_ptr_->observe(-180, 180);
         }
     }
     void AttackBehavior::attack_point_4() // TODO：补充云台方向控制———————————冲对面家,点2

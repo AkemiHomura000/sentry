@@ -95,12 +95,12 @@ namespace sp_decision
         // 更新基地受击状态?
         if (base_HP_ > msg->base_HP || base_attacked_)
         {
-            // ROS_INFO("base :%f", msg->base_HP);
             base_attacked_ = true;
+            //ROS_INFO("base -----------------------------------------------------:%hu",  msg->base_HP);
             if (base_HP_ == msg->base_HP)
             {
                 ros::Time time = ros::Time::now();
-                if ((time.sec - current_time.sec) > 5) // 频率待确定?
+                if ((time.sec - current_time.sec) > 15) // 频率待确定?
                 {
                     base_attacked_ = false;
                     current_time = ros::Time::now();

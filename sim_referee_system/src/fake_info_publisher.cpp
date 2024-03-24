@@ -30,12 +30,12 @@ void FakeInfoPublisher::Test(int id, FakeInfoPublisher *fakeinfo)
   {
   case 1:
     referee_msg_.stage_remain_time = 300;
-    referee_msg_.base_HP = 3000;
+    referee_msg_.base_HP = 1500;
     referee_msg_.game_progress = 3;
     break;
   case 2:
     referee_msg_.stage_remain_time = 300;
-    referee_msg_.base_HP = 3000;
+    referee_msg_.base_HP = 1500;
     referee_msg_.game_progress = 4;
     break;
   case 3:
@@ -50,7 +50,7 @@ void FakeInfoPublisher::Test(int id, FakeInfoPublisher *fakeinfo)
     {
       userstr >> userorder[j];
     }
-    referee_msg_.base_HP = 3000;
+    referee_msg_.base_HP = 1500;
     referee_msg_.stage_remain_time = userorder[0];
     ROS_INFO("time%d", referee_msg_.stage_remain_time);
     referee_msg_.robot_HP = userorder[1];

@@ -41,13 +41,8 @@ namespace sp_decision
         // root_node_->addChild(patrol_node_, BehaviorPriority::LOW);
 
         std::stringstream str;
-        str << std::endl
-            << "***********************" << std::endl;
         str << "*Super Power Decision*" << std::endl;
         str << "***********************";
-        log_exe_->info(str);
-        root_node_->print_tree();
-        str.str("");
         str << "*********START*********";
         blackboard_->LogPub(str.str());
         decision_thread_ = std::thread(&DecisionNode::ExecuteLoop, this);

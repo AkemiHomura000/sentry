@@ -81,7 +81,7 @@ namespace sp_decision
     uint16_t robot_hp_ = 600;
     uint16_t Sentry_HP_ = 600; // 敌方烧饼血量
     uint16_t robot_bullet_;
-    uint16_t base_HP_ = 3000;
+    uint16_t base_HP_ = 1500;
     ros::Time time_received_armor_;
     robot_msg::Armor armor_;
     nav_msgs::Odometry robot_pose_;
@@ -90,7 +90,7 @@ namespace sp_decision
      */
     int enemy_hp_[4];                         // 依次是基地，哨兵，单位一，单位二
     int enemy_stage_[4];                      // 机器人状态，0--死亡，1--复活无敌状态，2--正常存活
-    int enemy_number[2];                      // 英雄为1，步兵3，4，5
+    int enemy_number[2]={-1,-1};                      // 英雄为1，步兵3，4，5
     std::vector<ros::Time> enemy_revive_time; // 用于复活时间倒计时
     /**
      * @brief
