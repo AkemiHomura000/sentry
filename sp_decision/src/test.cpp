@@ -17,9 +17,9 @@ int main(int argc, char **argv)
     std::string ss = "0,1,3";
     enemy_msg.ss = ss;
     gimbal.yaw_min=0;
-    gimbal.yaw_max=90;
-    gimbal.pitch_min=-10;
-    gimbal.pitch_max=20;
+    gimbal.yaw_max=0;
+    gimbal.pitch_min=0;
+    gimbal.pitch_max=0;
     // 设置发布频率
     ros::Rate loop_rate(1); // 1Hz
 
