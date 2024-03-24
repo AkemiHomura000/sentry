@@ -275,6 +275,7 @@ namespace sp_decision
             {
                 ss << "," << enemy_number[1];
             }
+            //ss<<",3";
             robot_msg::EnemyStage enemy__;
             std::string binary_string = ss.str();
             enemy__.ss = binary_string;

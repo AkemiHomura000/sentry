@@ -40,14 +40,14 @@ void cmdVelCallback(const geometry_msgs::Twist::ConstPtr &msg)
     // }
     current_cmd_vel.linear.x = msg->linear.x * 0.4;
     current_cmd_vel.linear.y = msg->linear.y * 0.4;
-    current_cmd_vel.angular.z = -5;
+    current_cmd_vel.angular.z = 10;
     sentry_cmd_vel_pub.publish(current_cmd_vel);
-    robot_msg::CmdGimbal gimbal;
-    gimbal.yaw_min = -180;
-    gimbal.yaw_max = 180;
-    gimbal.pitch_max = 0;
-    gimbal.pitch_min = 0;
-    gimbal_pub_.publish(gimbal);
+    // robot_msg::CmdGimbal gimbal;
+    // gimbal.yaw_min = -180;
+    // gimbal.yaw_max = 180;
+    // gimbal.pitch_max = 0;
+    // gimbal.pitch_min = 0;
+    // gimbal_pub_.publish(gimbal);
 }
 
 void robotStateCallback(const robot_msg::RobotStateMsg::ConstPtr &state_msg)
