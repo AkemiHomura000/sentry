@@ -18,6 +18,8 @@ namespace sp_decision
         enemy_hp_sub_ = nh_.subscribe("Enemy_robot_HP", 10, &Blackboard::EnemyCallback, this);
         enemy_pub_ =
             nh_.advertise<robot_msg::EnemyStage>("/enemy_stage", 1);
+        log_pub_ =
+            nh_.advertise<robot_msg::EnemyStage>("/sentry/log", 1);
         nh_.param("min_hp", min_hp_, 200);
         nh_.param("min_bullet", min_bullet_, 100);
         nh_.param("min_outpost", min_outpost_, 300);
@@ -275,12 +277,21 @@ namespace sp_decision
             {
                 ss << "," << enemy_number[1];
             }
-            //ss<<",3";
+            // ss<<",3";
             robot_msg::EnemyStage enemy__;
             std::string binary_string = ss.str();
             enemy__.ss = binary_string;
             enemy_pub_.publish(enemy__);
         }
         enemy_hp_mutex.unlock();
+    }
+    void Blackboard::LogPub(std::string str)
+    {
+        robot_msg::Log log; // 记录日志
+        std::stringstream ss;
+        ss << str;
+        std::string binary_string = ss.str();
+        log.ss = binary_string;
+        log_pub_.publish(log);
     }
 } // namespace sp_decision

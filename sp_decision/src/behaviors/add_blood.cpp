@@ -4,6 +4,9 @@ namespace sp_decision
 {
     BehaviorState AddBloodBehavior::Update()
     {
+        std::stringstream str;
+        str << "*add_blood*" << std::endl;
+        blackboard_ptr_->LogPub(str.str());
         if (chassis_exe_ptr_->control_gimbal == 0) // 上一次循环未调用则恢复扫描模式
         {
             chassis_exe_ptr_->observe(0, 0);

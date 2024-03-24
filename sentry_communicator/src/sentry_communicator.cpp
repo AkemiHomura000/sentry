@@ -11,7 +11,7 @@ int main(int argc, char **argv)
     while(ros::ok())
     {
         can_bus.write();
-        ros::Duration(0.01).sleep();
+        ros::Duration(0.005).sleep();
         ros::spinOnce();
     }
     ros::waitForShutdown();

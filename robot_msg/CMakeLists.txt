@@ -57,6 +57,7 @@ add_message_files(
    Armor.msg
    EnemyStage.msg
    CmdGimbal.msg
+   Log.msg
 )
 
 ## Generate services in the 'srv' folder

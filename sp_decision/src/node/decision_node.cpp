@@ -49,7 +49,7 @@ namespace sp_decision
         root_node_->print_tree();
         str.str("");
         str << "*********START*********";
-        log_exe_->info(str);
+        blackboard_->LogPub(str.str());
         decision_thread_ = std::thread(&DecisionNode::ExecuteLoop, this);
         decision_thread_running_ = true;
     }
