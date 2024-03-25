@@ -15,7 +15,11 @@ namespace sp_decision
             chassis_exe_ptr_->observe(0, 0);
         }
         chassis_exe_ptr_->control_gimbal = 0;
-
+        if (blackboard_ptr_->stage_remain_time == 0)
+        {
+            chassis_exe_ptr_->Stop();
+            return BehaviorState::SUCCESS;
+        }
         ROS_INFO("hp: %d  ,time :%d ,available :%d", blackboard_ptr_->robot_hp_, blackboard_ptr_->stage_remain_time, blackboard_ptr_->available_hp_);
         if (blackboard_ptr_->action_status_ >= Blackboard::Action_Lock::ADD_BLOOD)
         {
@@ -38,7 +42,7 @@ namespace sp_decision
                 {
                     ROS_INFO("add_blood");
                     Go2Buff();
-                    if ((count == 0 && blackboard_ptr_->available_hp_ < 600&&number==0) || (count == 0 && blackboard_ptr_->available_hp_ < last_available_hp_ && number == 1))
+                    if ((count == 0 && blackboard_ptr_->available_hp_ < 600 && number == 0) || (count == 0 && blackboard_ptr_->available_hp_ < last_available_hp_ && number == 1))
                     {
                         last_available_hp_ = blackboard_ptr_->available_hp_;
                         last_time = ros::Time::now();
