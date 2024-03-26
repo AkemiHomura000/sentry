@@ -17,6 +17,7 @@ namespace sp_decision
         chassis_exe_ptr_->control_gimbal = 0;
         if (blackboard_ptr_->stage_remain_time == 0)
         {
+            ROS_INFO("stay (time==0)");
             chassis_exe_ptr_->Stop();
             return BehaviorState::SUCCESS;
         }
@@ -24,8 +25,8 @@ namespace sp_decision
         if (blackboard_ptr_->action_status_ >= Blackboard::Action_Lock::ADD_BLOOD)
         {
             if (blackboard_ptr_->action_status_ == Blackboard::Action_Lock::ADD_BLOOD ||
-                (blackboard_ptr_->robot_hp_ < 300 && blackboard_ptr_->stage_remain_time > 60) ||
-                (blackboard_ptr_->robot_hp_ < 600 && blackboard_ptr_->stage_remain_time < 90) || blackboard_ptr_->test_id == 1) // 补血条件：1.低于300血且时间>60且补血次数不超过2次;2.低于600血，且时间<90且补血次数不超过2次
+                (blackboard_ptr_->robot_hp_ >0 &&blackboard_ptr_->robot_hp_ < 300 && blackboard_ptr_->stage_remain_time > 60) ||
+                (blackboard_ptr_->robot_hp_ >0 &&blackboard_ptr_->robot_hp_ < 600 && blackboard_ptr_->stage_remain_time < 90) || blackboard_ptr_->test_id == 1) // 补血条件：1.低于300血且时间>60且补血次数不超过2次;2.低于600血，且时间<90且补血次数不超过2次
             {
                 if (blackboard_ptr_->action_status_ != Blackboard::Action_Lock::ADD_BLOOD) // 从其他状态进入会初始化
                 {

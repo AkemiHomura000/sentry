@@ -23,7 +23,7 @@ namespace sp_decision
                 blackboard_ptr_->action_status_ = Blackboard::Action_Lock::ATTACK;
                 return BehaviorState::SUCCESS;
             }
-            else if (blackboard_ptr_->stage_remain_time > 290) // 假设需要十秒买弹
+            else
             {
                 std::stringstream str;
                 str << "behavior: attack_1";
@@ -43,16 +43,6 @@ namespace sp_decision
             //     blackboard_ptr_->action_status_ = Blackboard::Action_Lock::ATTACK;
             //     return BehaviorState::SUCCESS;
             // }
-            else
-            {
-                std::stringstream str;
-                str << "behavior: attack_1";
-                blackboard_ptr_->LogPub(str.str());
-                ROS_INFO("attack_1");
-                attack_point_1();
-                blackboard_ptr_->action_status_ = Blackboard::Action_Lock::ATTACK;
-                return BehaviorState::SUCCESS;
-            }
         }
         return BehaviorState::FAILURE;
     }
