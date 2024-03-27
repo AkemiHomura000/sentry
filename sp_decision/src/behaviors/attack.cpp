@@ -19,7 +19,7 @@ namespace sp_decision
                 str << "behavior: backward_defence";
                 blackboard_ptr_->LogPub(str.str());
                 ROS_INFO("backward_defence");
-                attack_point_3();
+                attack_point_2();
                 blackboard_ptr_->action_status_ = Blackboard::Action_Lock::ATTACK;
                 return BehaviorState::SUCCESS;
             }
@@ -51,7 +51,7 @@ namespace sp_decision
     {
         if (chassis_exe_ptr_->FastMove(blackboard_ptr_->attack_pos[0].x, blackboard_ptr_->attack_pos[0].y) == 1)
         {
-            chassis_exe_ptr_->observe(-10, 10);
+            chassis_exe_ptr_->observe(-120, 20);
         }
     }
     void AttackBehavior::attack_point_2() // TODO：补充云台方向控制———————————占据启动区
@@ -63,7 +63,7 @@ namespace sp_decision
         else if (chassis_exe_ptr_->FastMove(blackboard_ptr_->attack_pos[1].x, blackboard_ptr_->attack_pos[1].y) == 1)
         {
             chassis_exe_ptr_->Stop();
-            chassis_exe_ptr_->observe(-180, 180);
+            chassis_exe_ptr_->observe(0, 0);
         }
     }
     void AttackBehavior::attack_point_3() // TODO：补充云台方向控制———————————冲对面家,点1

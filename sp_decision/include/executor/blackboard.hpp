@@ -58,13 +58,13 @@ namespace sp_decision
     //  std::vector<Point> attack_pos = {{1.7, 0}, {0.4, 1.6}, {1, -1.1}};
     //  std::vector<Point> attack_queue_pos = {{1, -1.2}, {1.1, -1.2}};
 
-    std::vector<Point> buff_pos_ = {{-0.7, 0.65}, {-0.7, -0.13}};
+    std::vector<Point> buff_pos_ = {{-1.6,2.22}, {-1.4,1.00}};
     // std::vector<Point> buff_queue_pos_ = {{-1.48, 1.77}, {-1.18, 1.77}, {-1.38, 1.67}, {-1.28, 1.87}};
     std::vector<Point> backward_defence_pos_ = {{0.5, 0.5}, {1.6, 0.7}};   // base周围点位
     std::vector<Point> backward_defence_queue_pos_ = {{1, -1}, {2, -1.5}}; // base周围点位
     std::vector<Point> random_mode_pos = {{0.0, 0.0}, {1, -0.2}};
     std::vector<Point> patrol_pos = {{0.0, 0.0}, {-0.8, 0.0}, {0.0, -0.8}};
-    std::vector<Point> attack_pos = {{1.32, 0.0}, {2.50, -0.7}, {3.55, -0.96}, {3.12, 0.0}, {3.0, 1.47}};
+    std::vector<Point> attack_pos = {{0.37,2.00}, {0.12,0.00}, {3.55, -0.96}, {3.12, 0.0}, {3.0, 1.47}};
     std::vector<Point> attack_queue_pos = {{1.4, -1.8}, {1.3, -1.7}};
     int min_hp_;
     int min_bullet_;

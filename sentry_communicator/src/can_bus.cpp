@@ -139,7 +139,7 @@ namespace sentry_communicator
             // later 4 bits
             referee_info_msg_.rfid_centerpoint_state = (uint16_t)(frame.data[7] & 0x0Fu);
 
-            //referee_info_pub_.publish(referee_info_msg_);
+            referee_info_pub_.publish(referee_info_msg_);
 
             // Robot_ID = frame.data[0];
             // Keyboard = frame.data[1];
