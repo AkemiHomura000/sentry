@@ -12,5 +12,5 @@ sleep 1s
 gnome-terminal -x bash -c "/home/sentry/sp_nav_ws/src/sp_nav/FAST_LIO/launch/usb2can.sh;exec bash"
 sleep 1s
 gnome-terminal -x bash -c "/home/sentry/sp_nav_ws/src/sp_nav/FAST_LIO/launch/decision.sh ;exec bash"
-
+gnome-terminal -x bash -c "rosbag record /localization /referee_info /Enemy_robot_HP /enemy_stage /sentry/log /armor /move_base/status /cmd_vel /sentry/cmd_vel;exec bash"
 

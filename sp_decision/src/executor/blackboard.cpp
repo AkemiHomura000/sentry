@@ -267,6 +267,8 @@ namespace sp_decision
                     attack = 1;
                 }
             }
+            ROS_INFO("enemy_number_1:%d\tnumber_2:%d",enemy_number[0],enemy_number[1]);
+            ROS_INFO("enemy1_state:%d\enemy2_state:%d",enemy_stage_[2],enemy_stage_[3]);
             std::stringstream ss;
             ss << "0";
             if (enemy_stage_[2] == 1)
