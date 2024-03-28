@@ -64,7 +64,7 @@ namespace sp_decision
     std::vector<Point> backward_defence_queue_pos_ = {{1, -1}, {2, -1.5}}; // base周围点位
     std::vector<Point> random_mode_pos = {{0.0, 0.0}, {1, -0.2}};
     std::vector<Point> patrol_pos = {{0.0, 0.0}, {-0.8, 0.0}, {0.0, -0.8}};
-    std::vector<Point> attack_pos = {{0.55,3.24}, {0.0,0.0}, {3.55, -0.96}, {3.12, 0.0}, {3.0, 1.47}};
+    std::vector<Point> attack_pos = {{0.55,3.24}, {0.0,0.0}, {0.55,-0.92}, {3.12, 0.0}, {3.0, 1.47}};
     std::vector<Point> attack_queue_pos = {{1.4, -1.8}, {1.3, -1.7}};
     int min_hp_;
     int min_bullet_;
