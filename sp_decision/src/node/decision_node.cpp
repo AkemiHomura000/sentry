@@ -1,5 +1,6 @@
 #include "node/decision_node.h"
 #include <executor/blackboard.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 namespace sp_decision
 {
@@ -14,6 +15,23 @@ namespace sp_decision
     }
     DecisionNode::DecisionNode()
     {
+        ros::Time t = ros::Time::now();
+        boost::posix_time::ptime time = t.toBoost();
+        int year = time.date().year();
+        int month = time.date().month();
+        int day = time.date().day();
+        int hour = time.time_of_day().hours()+8;
+        int minute = time.time_of_day().minutes();
+        int second = time.time_of_day().seconds();
+
+        std::stringstream ss;
+        ss << "/home/sentry/bag/" << year << "-" << month << "-" << day << "-" << hour << "-" << minute << "-" << second << ".bag";
+        std::string path = ss.str();
+        std::string topics = " /localization /referee_info /Enemy_robot_HP /enemy_stage /sentry/log /armor /move_base/status /cmd_vel /sentry/cmd_vel";
+        std::string node_name = " __name:=my_record_node";
+        std::string cmd_str = "gnome-terminal -x bash -c 'rosbag record -O " + path + topics + node_name + "'";
+        int ret = system(cmd_str.c_str()); // #include <stdlib.h>
+
         nh_.param("loop_rate", loop_rate_, 5);
 
         blackboard_ = std::make_shared<Blackboard>();
@@ -35,7 +53,7 @@ namespace sp_decision
             new PatrolBehavior("patrol", 6, blackboard_, chassis_exe_, log_exe_);
         root_node_->addChild(add_blood_node_, BehaviorPriority::HIGH);
         // root_node_->addChild(retreat_node_, BehaviorPriority::MID);
-        //root_node_->addChild(pursuit_node_, BehaviorPriority::MID);
+        // root_node_->addChild(pursuit_node_, BehaviorPriority::MID);
         root_node_->addChild(attack_node_, BehaviorPriority::MID);
         // root_node_->addChild(defence_node_, BehaviorPriority::HIGH);
         // root_node_->addChild(patrol_node_, BehaviorPriority::LOW);
@@ -54,7 +72,44 @@ namespace sp_decision
         int cnt = 0;
         while (decision_thread_running_)
         {
-            if (blackboard_->game_status_ == Blackboard::MatchSatuts::AT_MATCH)
+            if (blackboard_->game_status_ == Blackboard::MatchSatuts::AFTER_MATCH)
+            {
+                ros::V_string v_nodes;
+                ros::master::getNodes(v_nodes);
+
+                std::string node_name = std::string("/my_record_node");
+                auto it = std::find(v_nodes.begin(), v_nodes.end(), node_name.c_str());
+                if (it != v_nodes.end())
+                {
+                    std::string cmd_str = "rosnode kill " + node_name;
+                    int ret = system(cmd_str.c_str());
+                    std::cout << "## stop rosbag record cmd: " << cmd_str << std::endl;
+                }
+            }
+            if (blackboard_->game_status_ != Blackboard::MatchSatuts::AT_MATCH)
+            {
+                std::stringstream str;
+                str << "progress!=4,idle";
+                switch (blackboard_->game_status_)
+                {
+                case Blackboard::MatchSatuts::TO_BEGIN:
+                    str << "TO_BEGIN";
+                    break;
+                case Blackboard::MatchSatuts::AT_MATCH:
+                    str << "AT_MATCH";
+                    break;
+                case Blackboard::MatchSatuts::AFTER_MATCH:
+                    str << "AFTER_MATCH";
+                    break;
+                default:
+                    str << "Unknown";
+                    break;
+                }
+                chassis_exe_->Idle();
+                chassis_exe_->observe(-180, 180);
+                blackboard_->LogPub(str.str());
+            }
+            else
             {
                 root_node_->Run();
             }

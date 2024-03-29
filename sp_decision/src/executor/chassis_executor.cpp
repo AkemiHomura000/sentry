@@ -247,8 +247,17 @@ Implementation ChassisExecutor::Stop()
 Implementation ChassisExecutor::Idle()
 {
     Implementation status;
-    robotStatePub(RobotState::IDLE);
-    VelIdle();
+    robotStatePub(RobotState::STOP);
+    ROS_INFO("---------------------------");
+    if (number_1 % 2 == 0)
+    {
+        status=SendDataToPlan(0.01, 0.01);
+    }
+    else
+    {
+        status=SendDataToPlan(-0.01, -0.01);
+    }
+    number_1++;
     return status;
 }
 /**

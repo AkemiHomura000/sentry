@@ -65,6 +65,7 @@ public:
   geometry_msgs::Twist sentry_cmdvel_;
   Implementation exec_stauts;
   bool control_gimbal=0;//是否需要控制云台
+  int number_1=0;
 private:
   sp_decision::Blackboard::Ptr blackboard_;
   ros::NodeHandle nh_;
