@@ -23,13 +23,24 @@ namespace sp_decision
                 blackboard_ptr_->action_status_ = Blackboard::Action_Lock::ATTACK;
                 return BehaviorState::SUCCESS;
             }
-            else
+            if (blackboard_ptr_->stage_remain_time > 270)
             {
                 std::stringstream str;
                 str << "behavior: attack_1";
                 blackboard_ptr_->LogPub(str.str());
                 ROS_INFO("attack_1");
                 attack_point_1();
+                blackboard_ptr_->action_status_ = Blackboard::Action_Lock::ATTACK;
+                return BehaviorState::SUCCESS;
+            }
+            else
+            {
+                chassis_exe_ptr_->observe(-180, 180);
+                std::stringstream str;
+                str << "behavior: attack_3";
+                blackboard_ptr_->LogPub(str.str());
+                ROS_INFO("attack_3");
+                attack_point_3();
                 blackboard_ptr_->action_status_ = Blackboard::Action_Lock::ATTACK;
                 return BehaviorState::SUCCESS;
             }
@@ -51,7 +62,7 @@ namespace sp_decision
     {
         if (chassis_exe_ptr_->FastMove(blackboard_ptr_->attack_pos[0].x, blackboard_ptr_->attack_pos[0].y) == 1)
         {
-            chassis_exe_ptr_->observe(-120, 20);
+            chassis_exe_ptr_->observe(-120, 5);
         }
     }
     void AttackBehavior::attack_point_2() // TODO：补充云台方向控制———————————占据启动区
@@ -66,17 +77,15 @@ namespace sp_decision
             chassis_exe_ptr_->observe(0, 0);
         }
     }
-    void AttackBehavior::attack_point_3() // TODO：补充云台方向控制———————————冲对面家,点1
+    void AttackBehavior::attack_point_3() // TODO：补充云台方向控制———————————躲墙后
     {
-        ROS_INFO("backward_defence");
-        if (chassis_exe_ptr_->FastMove(blackboard_ptr_->attack_pos[1].x, blackboard_ptr_->attack_pos[1].y) == 2)
+        if (chassis_exe_ptr_->FastMove(blackboard_ptr_->attack_pos[2].x, blackboard_ptr_->attack_pos[2].y) == 2)
         {
             chassis_exe_ptr_->Stop();
         }
-        else if (chassis_exe_ptr_->FastMove(blackboard_ptr_->attack_pos[1].x, blackboard_ptr_->attack_pos[1].y) == 1)
+        else if (chassis_exe_ptr_->FastMove(blackboard_ptr_->attack_pos[2].x, blackboard_ptr_->attack_pos[2].y) == 1)
         {
             chassis_exe_ptr_->Stop();
-            chassis_exe_ptr_->observe(-180, 180);
         }
     }
     void AttackBehavior::attack_point_4() // TODO：补充云台方向控制———————————冲对面家,点2

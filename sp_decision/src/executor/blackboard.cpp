@@ -84,7 +84,7 @@ namespace sp_decision
         {
             game_status_ = MatchSatuts::AFTER_MATCH;
         }
-        if (game_progress == 4 )
+        if (game_progress == 4&&stage_remain_time<=299)
         {
             game_status_ = MatchSatuts::AT_MATCH;
         }
